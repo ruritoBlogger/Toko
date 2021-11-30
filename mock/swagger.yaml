@@ -1,0 +1,1344 @@
+openapi: 3.1.0
+info:
+  title: Index
+  version: '1.0'
+  summary: 東証一部に上場している企業の情報を取り扱う
+servers:
+  - url: 'http://localhost:8080/v1'
+paths:
+  /industry:
+    get:
+      summary: get indstries
+      tags:
+        - Industry
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Industry'
+              examples: {}
+      operationId: get-industries
+    post:
+      summary: add industry
+      tags:
+        - Industry
+      responses:
+        '200':
+          description: OK
+      operationId: post-industries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Industry'
+    put:
+      summary: ''
+      operationId: put-industries
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Industry'
+    parameters: []
+  '/industry/{industryid}':
+    parameters:
+      - schema:
+          type: string
+        name: industryid
+        in: path
+        required: true
+    get:
+      summary: get industry
+      tags:
+        - Industry
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Industry'
+      operationId: get-industries-industryid
+    delete:
+      summary: remove industry
+      tags:
+        - Industry
+      responses:
+        '200':
+          description: OK
+      operationId: delete-industries-industryid
+  '/industry/{industryid}/index':
+    get:
+      summary: get industry average index with industory ID
+      tags:
+        - Industry
+        - Index
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IndustryAveIndex'
+        '':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IndustryAveIndex'
+      operationId: get-industry-index
+    post:
+      summary: add new average index
+      tags:
+        - Industry
+        - Index
+      responses: {}
+      operationId: post-industry-index
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndustryAveIndex'
+    put:
+      summary: edit average index
+      tags:
+        - Industry
+        - Index
+      responses: {}
+      operationId: put-industry-index
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndustryAveIndex'
+    parameters:
+      - schema:
+          type: string
+        name: industryid
+        in: path
+        required: true
+  '/industry/{industryid}/index/current':
+    parameters:
+      - schema:
+          type: string
+        name: industryid
+        in: path
+        required: true
+    get:
+      summary: get current average index
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndustryAveIndex'
+      operationId: get-industry-industryid-index-current
+  '/industry/{industryid}/index/{IndustryAveIndexID}':
+    parameters:
+      - schema:
+          type: string
+        name: industryid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: IndustryAveIndexID
+        in: path
+        required: true
+    get:
+      summary: get average index
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndustryAveIndex'
+      operationId: get-industry-industryid-index-IndustryAveIndexID
+    delete:
+      summary: delete average index
+      tags: []
+      responses:
+        '200':
+          description: OK
+      operationId: delete-industry-industryid-index-IndustryAveIndexID
+  /company:
+    put:
+      summary: edit company
+      tags:
+        - Company
+      responses:
+        '200':
+          description: OK
+      operationId: put-companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+    get:
+      summary: ''
+      operationId: get-companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Company'
+    post:
+      summary: ''
+      operationId: post-companies
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+    parameters: []
+  '/company/{companyid}':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get company
+      tags:
+        - Company
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+              examples: {}
+      operationId: get-companies-companyid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: number
+            examples:
+              example-1:
+                value: 0
+        description: ''
+    delete:
+      summary: delete company
+      tags:
+        - Company
+      operationId: delete-companies-companyid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: number
+      responses:
+        '200':
+          description: OK
+  '/company/{companyid}/stock':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get stock prices for stockPricesID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockPrices'
+      operationId: get-stock-stockPricesID
+    post:
+      summary: add new stock price
+      tags: []
+      responses:
+        '200':
+          description: OK
+      operationId: post-stock-stockPricesID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockPrices'
+    put:
+      summary: edit stock price
+      tags: []
+      responses: {}
+      operationId: put-stock-stockPricesID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockPrices'
+  '/company/{companyid}/stock/{stockPricesID}':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: stockPricesID
+        in: path
+        required: true
+    get:
+      summary: get stock price
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockPrices'
+      operationId: get-companies-companyid-stock-stockPricesID
+    delete:
+      summary: delete stock price
+      tags: []
+      responses: {}
+      operationId: delete-companies-companyid-stock-stockPricesID
+  '/company/{companyid}/stock/current':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get stock price
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockPrices'
+      operationId: get-companies-companyid-stock-stockPricesID
+  '/company/{companyid}/financial':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get financial statements for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FinancialStatements'
+      operationId: get-company-companyid-financial
+    post:
+      summary: add new financial statements
+      tags: []
+      responses: {}
+      operationId: post-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinancialStatements'
+    put:
+      summary: edit financial statements
+      tags: []
+      responses: {}
+      operationId: put-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinancialStatements'
+        description: ''
+  '/company/{companyid}/financial/income':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get income statements for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomeStatement'
+      operationId: get-company-companyid-financial
+    post:
+      summary: add new financial statements
+      tags: []
+      responses: {}
+      operationId: post-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomeStatement'
+    put:
+      summary: edit financial statements
+      tags: []
+      responses: {}
+      operationId: put-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomeStatement'
+        description: ''
+  '/company/{companyid}/financial/income/{incomeid}':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: incomeid
+        in: path
+        required: true
+    get:
+      summary: get income statement for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeStatement'
+      operationId: get-company-companyid-financial
+    delete:
+      summary: ''
+      operationId: delete-company-companyid-financial-income-incomeid
+      responses:
+        '200':
+          description: OK
+  '/company/{companyid}/financial/balance':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get balance sheets for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BalanceSheet'
+      operationId: get-company-companyid-financial
+      description: ''
+    post:
+      summary: add new financial statements
+      tags: []
+      responses: {}
+      operationId: post-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BalanceSheet'
+    put:
+      summary: edit financial statements
+      tags: []
+      responses: {}
+      operationId: put-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BalanceSheet'
+        description: ''
+  '/company/{companyid}/financial/balance/{balanceid}':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: balanceid
+        in: path
+        required: true
+    get:
+      summary: get balance sheet for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceSheet'
+      operationId: get-company-companyid-financial
+      description: ''
+    delete:
+      summary: ''
+      operationId: delete-company-companyid-financial-balance-balanceid
+      responses:
+        '200':
+          description: OK
+  '/company/{companyid}/financial/cash':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get cash flows for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CashFlows'
+      operationId: get-company-companyid-financial
+      description: ''
+    post:
+      summary: add new financial statements
+      tags: []
+      responses: {}
+      operationId: post-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashFlows'
+    put:
+      summary: edit financial statements
+      tags: []
+      responses: {}
+      operationId: put-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashFlows'
+        description: ''
+  '/company/{companyid}/financial/cash/{cashid}':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: cashid
+        in: path
+        required: true
+    get:
+      summary: get cash flow for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlows'
+      operationId: get-company-companyid-financial
+      description: ''
+  '/company/{companyid}/financial/index':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get index data for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Index'
+      operationId: get-company-companyid-financial
+      description: ''
+    post:
+      summary: add new financial statements
+      tags: []
+      responses: {}
+      operationId: post-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Index'
+    put:
+      summary: edit financial statements
+      tags: []
+      responses: {}
+      operationId: put-company-companyid-financial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Index'
+        description: ''
+  '/company/{companyid}/financial/index/{indexid}':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: indexid
+        in: path
+        required: true
+    get:
+      summary: get index data for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Index'
+      operationId: get-company-companyid-financial
+      description: ''
+    delete:
+      summary: ''
+      operationId: delete-company-companyid-financial-index-indexid
+      responses:
+        '200':
+          description: OK
+  '/company/{companyid}/financial/current':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get current financial statements
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FinancialStatements'
+        '':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialStatements'
+      operationId: get-company-companyid-financial
+  '/company/{companyid}/financial/current/income':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get current income statement
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FinancialStatements'
+        '':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeStatement'
+          description: ''
+      operationId: get-company-companyid-financial
+  '/company/{companyid}/financial/current/balance':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get current balance sheet
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FinancialStatements'
+        '':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceSheet'
+          description: ''
+      operationId: get-company-companyid-financial
+  '/company/{companyid}/financial/current/cash':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get current cash flows
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FinancialStatements'
+        '':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlows'
+          description: ''
+      operationId: get-company-companyid-financial
+  '/company/{companyid}/financial/current/index':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+    get:
+      summary: get current index
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FinancialStatements'
+        '':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Index'
+          description: ''
+      operationId: get-company-companyid-financial
+  '/company/{companyid}/financial/{financialid}':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: financialid
+        in: path
+        required: true
+    get:
+      summary: get financial statements for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialStatements'
+      operationId: get-company-companyid-financial
+    delete:
+      summary: ''
+      operationId: delete-company-companyid-financial-financialid
+      responses:
+        '200':
+          description: OK
+  '/company/{companyid}/financial/{financialid}/income':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: financialid
+        in: path
+        required: true
+    get:
+      summary: get income statement for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeStatement'
+      operationId: get-company-companyid-financial
+      description: ''
+    delete:
+      summary: ''
+      operationId: delete-company-companyid-financial-financialid
+      responses:
+        '200':
+          description: OK
+  '/company/{companyid}/financial/{financialid}/balance':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: financialid
+        in: path
+        required: true
+    get:
+      summary: get balance sheet for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceSheet'
+      operationId: get-company-companyid-financial
+      description: ''
+    delete:
+      summary: ''
+      operationId: delete-company-companyid-financial-financialid
+      responses:
+        '200':
+          description: OK
+  '/company/{companyid}/financial/{financialid}/cash':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: financialid
+        in: path
+        required: true
+    get:
+      summary: get cash flow for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlows'
+      operationId: get-company-companyid-financial
+      description: ''
+    delete:
+      summary: ''
+      operationId: delete-company-companyid-financial-financialid
+      responses:
+        '200':
+          description: OK
+  '/company/{companyid}/financial/{financialid}/index':
+    parameters:
+      - schema:
+          type: string
+        name: companyid
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: financialid
+        in: path
+        required: true
+    get:
+      summary: get index for campany
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Index'
+      operationId: get-company-companyid-financial
+      description: ''
+    delete:
+      summary: ''
+      operationId: delete-company-companyid-financial-financialid
+      responses:
+        '200':
+          description: OK
+  /stock/current:
+    get:
+      summary: get current stock prices
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockPrices'
+      operationId: get-stock-current
+  /financial/current:
+    get:
+      summary: get current financial Statements
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FinancialStatements'
+      operationId: get-financial-current
+components:
+  schemas:
+    BalanceSheet:
+      title: BalanceSheet
+      type: object
+      x-tags:
+        - Financial
+      description: 貸借対照表を管理する
+      properties:
+        id:
+          type: number
+        IDFinancial:
+          type: number
+          description: '財務諸表のID, 財務諸表に依存する'
+        TotalAssets:
+          type: number
+          description: 総資産
+        NetAssets:
+          type: number
+          description: 自己資本
+        CapitalStock:
+          type: number
+          description: 資本金
+        ProfitSurplus:
+          type: number
+          description: 利益余剰金
+        CashEquivalent:
+          type: number
+          description: 現預金
+        NetCash:
+          type: number
+          description: ネットキャッシュ
+        Depreciation:
+          type: number
+          description: 減価償却費
+        CapitalInvestment:
+          type: number
+          description: 設備投資費
+        Liabilities:
+          type: number
+          description: 有利子負債
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+      required:
+        - IDFinancial
+        - TotalAssets
+        - NetAssets
+        - CapitalStock
+        - ProfitSurplus
+        - CashEquivalent
+        - NetCash
+        - Depreciation
+        - CapitalInvestment
+        - Liabilities
+        - CreatedAt
+        - UpdatedAt
+    CashFlows:
+      title: CashFlows
+      type: object
+      x-tags:
+        - Financial
+      description: キャッシュフロー計算書の情報を管理する
+      properties:
+        id:
+          type: number
+        IDFinancial:
+          type: number
+          description: '財務諸表のID, 財務諸表に依存する'
+        SalesCF:
+          type: number
+          description: 営業キャッシュフロー
+        InvestmentCF:
+          type: number
+          description: 投資キャッシュフロー
+        FinancialCF:
+          type: number
+          description: 財務キャッシュフロー
+        CashEquivalent:
+          type: number
+          description: 現金等価物
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+      required:
+        - IDFinancial
+        - SalesCF
+        - InvestmentCF
+        - FinancialCF
+        - CashEquivalent
+        - CreatedAt
+        - UpdatedAt
+    Company:
+      title: Company
+      type: object
+      description: |-
+        企業情報を管理する
+        具体的な数値は持たない
+      examples:
+        - id: string
+          IDIndustry: string
+          IdentificationCode: 0
+          CreatedAt: string
+          UpdatedAt: string
+      properties:
+        id:
+          type: integer
+        IDIndustry:
+          type: integer
+          description: '業種ID, 業種モデルに依存'
+        IdentificationCode:
+          type: integer
+          description: 株式の識別コード
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+        name:
+          type: string
+      required:
+        - IDIndustry
+        - IdentificationCode
+        - CreatedAt
+        - UpdatedAt
+    FinancialStatements:
+      title: FinancialStatements
+      type: object
+      x-tags:
+        - Financial
+      description: |-
+        財務諸表
+        このモデルでは数値管理はやらない
+        どちらかとういと決算日を管理してる
+      properties:
+        id:
+          type: number
+        IDCompany:
+          type: number
+          description: どの企業の情報かを管理
+        AnnouncementDate:
+          type: number
+          description: 財務諸表の発表日
+        isFiscal:
+          type: boolean
+          description: 決算日か四半期決算日か(決算日ならtrue)
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+      required:
+        - IDCompany
+        - AnnouncementDate
+        - isFiscal
+        - CreatedAt
+        - UpdatedAt
+    IncomeStatement:
+      title: IncomeStatement
+      type: object
+      x-tags:
+        - Financial
+      description: 損益計算書を管理する
+      properties:
+        id:
+          type: number
+        IDFinancial:
+          type: number
+          description: '財務諸表のID, 財務諸表に依存する'
+        TotalSales:
+          type: number
+          description: 売上高
+        OperatingIncome:
+          type: number
+          description: 営業利益
+        OrdinaryIncome:
+          type: number
+          description: 経常利益
+        NetIncome:
+          type: number
+          description: 純利益
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+      required:
+        - IDFinancial
+        - TotalSales
+        - OperatingIncome
+        - OrdinaryIncome
+        - NetIncome
+        - CreatedAt
+        - UpdatedAt
+    Index:
+      title: Index
+      type: object
+      x-tags:
+        - Index
+        - Financial
+      description: 財務諸表から計算出来る指標を管理する
+      properties:
+        id:
+          type: number
+        IDFinancial:
+          type: number
+          description: '財務諸表のID, 財務諸表に依存する'
+        CapitalAdequacyRatio:
+          type: number
+          description: 自己資本比率
+        ROE:
+          type: number
+          description: 自己資本利益率
+        ROA:
+          type: number
+          description: 総資本利益率
+        PER:
+          type: number
+          description: 株価収益率
+        PBR:
+          type: number
+          description: 株価純資産倍率
+        EPS:
+          type: number
+          description: 1株当たり当期純利益
+        PCFR:
+          type: number
+          description: 株価キャッシュフロー倍率
+        YieldGap:
+          type: number
+          description: 利回り格差
+        EBITDA:
+          type: number
+        EV:
+          type: number
+        EV/EBITDA:
+          type: number
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+      required:
+        - IDFinancial
+        - CapitalAdequacyRatio
+        - ROE
+        - ROA
+        - PER
+        - PBR
+        - EPS
+        - PCFR
+        - YieldGap
+        - EBITDA
+        - EV
+        - EV/EBITDA
+    Industry:
+      title: Industry
+      type: object
+      x-tags:
+        - Industry
+      examples:
+        - id: string
+          name: string
+      description: 業種の情報を管理する
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: '業種名 (ex: 精密機械)'
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+      required:
+        - name
+    IndustryAveIndex:
+      title: IndustryAveIndex
+      type: object
+      x-tags:
+        - Industry
+        - Index
+      description: 業種別の平均指標を管理する
+      properties:
+        id:
+          type: integer
+        IDIndustry:
+          type: integer
+          description: 業種平均財務諸表ID、これに依存
+        AnnouncementDate:
+          type: string
+          description: 計算に用いた指標が発表された日、大体決算日
+        CapitalAdequacyRatio:
+          type: number
+          description: 自己資本比率
+        ROE:
+          type: number
+          description: '自己資本利益率  '
+        ROA:
+          type: number
+          description: 総資本利益率
+        PER:
+          type: number
+          description: 株価収益率
+        PBR:
+          type: number
+          description: 株価純資産倍率
+        EPS:
+          type: number
+          description: 1株当たり当期純利益
+        PCFR:
+          type: number
+          description: 1株当たりキャッシュフロー倍率
+        YieldGap:
+          type: number
+          description: 利回り格差
+        EBITDA:
+          type: number
+        EV:
+          type: number
+        EV/EBITDA:
+          type: number
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+      required:
+        - IDIndustry
+        - AnnouncementDate
+        - CapitalAdequacyRatio
+        - ROE
+        - ROA
+        - PER
+        - PBR
+        - EPS
+        - PCFR
+        - YieldGap
+        - EBITDA
+        - EV
+        - EV/EBITDA
+    StockPrices:
+      title: StockPrices
+      type: object
+      x-tags:
+        - Stock
+      description: 株価を管理する
+      properties:
+        id:
+          type: number
+        IDCompany:
+          type: number
+        OpeningPrice:
+          type: number
+        ClosingPrice:
+          type: number
+        HighPrice:
+          type: number
+        LowPrice:
+          type: number
+        Date:
+          type: number
+        CreatedAt:
+          type: number
+        UpdatedAt:
+          type: number
+      required:
+        - IDCompany
+        - OpeningPrice
+        - ClosingPrice
+        - HighPrice
+        - LowPrice
+        - Date
+        - CreatedAt
+        - UpdatedAt
