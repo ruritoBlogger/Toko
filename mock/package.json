@@ -1,0 +1,22 @@
+{
+  "name": "toko",
+  "version": "1.0.0",
+  "description": "株式売買をする上で、過去のデータを収集して判断材料にする web アプリケーションのバックエンド予定地です.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "prism mock ./swagger.yaml -d -p 8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruritoblogger/toko.git"
+  },
+  "author": "rurito0125",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ruritoblogger/toko/issues"
+  },
+  "homepage": "https://github.com/ruritoblogger/toko#readme",
+  "devDependencies": {
+    "@stoplight/prism-cli": "^4.6.1"
+  }
+}
