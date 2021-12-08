@@ -11,7 +11,7 @@ export class Industry {
   @PrimaryGeneratedColumn()
   readonly id: number
 
-  @Column({ length: 50 })
+  @Column({ length: 60 })
   name: string
 
   @CreateDateColumn()
