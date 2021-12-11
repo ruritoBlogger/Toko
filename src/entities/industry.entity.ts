@@ -1,7 +1,7 @@
 import {
-  Column,
   CreateDateColumn,
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
@@ -11,7 +11,7 @@ export class Industry {
   @PrimaryGeneratedColumn()
   readonly id: number
 
-  @Column({ length: 60 })
+  @PrimaryColumn({ length: 60, unique: true })
   name: string
 
   @CreateDateColumn()
