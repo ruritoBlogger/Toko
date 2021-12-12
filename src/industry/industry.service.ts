@@ -36,7 +36,9 @@ export class IndustryService {
       TE.bind('canIndustryCreate', (isIndustryExist) =>
         pipe(
           isIndustryExist
-            ? E.left(new ConflictException('industry is already existed.'))
+            ? E.left(
+                new ConflictException(`industry ${name} is already existed.`),
+              )
             : E.right(true),
           TE.fromEither,
         ),
@@ -69,7 +71,10 @@ export class IndustryService {
     )
   }
 
-  getIndustyList() {
-    return this.industryRepository.find()
+  getIndustyList(): TE.TaskEither<HttpException, Industry[]> {
+    return TE.tryCatch(
+      () => this.industryRepository.find(),
+      (error) => new InternalServerErrorException(error),
+    )
   }
 }
