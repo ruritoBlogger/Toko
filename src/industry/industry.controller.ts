@@ -1,6 +1,4 @@
-import { Controller, Get, Post, Query } from '@nestjs/common'
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
+import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 
 import { Industry } from '../entities'
 import { returnWithThrowHttpException } from '../utils/returnWithThrowHttpException'
@@ -18,9 +16,18 @@ export class IndustryController {
   }
 
   @Post()
-  async addIndustry(@Query() query: { name: string }): Promise<Industry> {
+  async addIndustry(@Body() body: { name: string }): Promise<Industry> {
     return await this.service
-      .addIndustry(query.name)()
+      .addIndustry(body.name)()
+      .then((result) => returnWithThrowHttpException(result))
+  }
+
+  @Put()
+  async updateIndustry(
+    @Body() body: { id: number; name: string },
+  ): Promise<Industry> {
+    return await this.service
+      .updateIndustry(body.id, body.name)()
       .then((result) => returnWithThrowHttpException(result))
   }
 }
