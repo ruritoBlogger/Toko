@@ -71,6 +71,44 @@ export class IndustryService {
     )
   }
 
+  updateIndustry(
+    id: number,
+    name: string,
+  ): TE.TaskEither<HttpException, Industry> {
+    return pipe(
+      this.findIndustryByName(name),
+      TE.bind('canIndustryUpdate', (isIndustryExist) =>
+        pipe(
+          isIndustryExist
+            ? E.left(
+                new ConflictException(`industry ${name} is already existed.`),
+              )
+            : E.right(true),
+          TE.fromEither,
+        ),
+      ),
+      // mapが流れてくる時点で名前被りがないと判断
+      TE.bind('target', () =>
+        TE.tryCatch(
+          () =>
+            this.industryRepository.findOne({
+              where: {
+                id: id,
+              },
+            }),
+          (error) => new InternalServerErrorException(error),
+        ),
+      ),
+      TE.map(({ target }) =>
+        TE.tryCatch(
+          () => this.industryRepository.save({ ...target, name: name }),
+          (error) => new InternalServerErrorException(error),
+        ),
+      ),
+      TE.flatten,
+    )
+  }
+
   getIndustyList(): TE.TaskEither<HttpException, Industry[]> {
     return TE.tryCatch(
       () => this.industryRepository.find(),
