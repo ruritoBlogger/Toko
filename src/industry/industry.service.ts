@@ -26,7 +26,10 @@ export class IndustryService {
     return pipe(
       TE.tryCatch(
         () => this.industryRepository.findOne({ where: { name } }),
-        (error) => new InternalServerErrorException(error),
+        () =>
+          new InternalServerErrorException(
+            'cannnot access to database with findOne',
+          ),
       ),
       TE.map((result) => !!result),
     )
@@ -51,7 +54,10 @@ export class IndustryService {
         pipe(
           TE.tryCatch(
             () => this.industryRepository.insert(new Industry(name)),
-            (error) => new InternalServerErrorException(error),
+            () =>
+              new InternalServerErrorException(
+                'cannot access to database with insert',
+              ),
           ),
         ),
       ),
@@ -66,7 +72,10 @@ export class IndustryService {
                 id: insertedObjectID,
               },
             }),
-          (error) => new InternalServerErrorException(error),
+          () =>
+            new InternalServerErrorException(
+              'cannot access to database with findOne',
+            ),
         ),
       ),
       TE.flatten,
@@ -79,9 +88,9 @@ export class IndustryService {
   ): TE.TaskEither<HttpException, Industry> {
     return pipe(
       this.findIndustryByName(name),
-      TE.bind('canIndustryUpdate', (isIndustryExist) =>
+      TE.map((isSameNameIndustryExist) =>
         pipe(
-          isIndustryExist
+          isSameNameIndustryExist
             ? E.left(
                 new ConflictException(`industry ${name} is already existed.`),
               )
@@ -90,21 +99,16 @@ export class IndustryService {
         ),
       ),
       // mapが流れてくる時点で名前被りがないと判断
-      TE.bind('target', () =>
+      TE.bind('updateTarget', () => this.getIndustry(id)),
+      TE.map(({ updateTarget }) =>
         TE.tryCatch(
           () =>
-            this.industryRepository.findOne({
-              where: {
-                id: id,
-              },
-            }),
-          (error) => new InternalServerErrorException(error),
-        ),
-      ),
-      TE.map(({ target }) =>
-        TE.tryCatch(
-          () => this.industryRepository.save({ ...target, name: name }),
-          (error) => new InternalServerErrorException(error),
+            this.industryRepository.save({ id: updateTarget.id, name: name }),
+          (error) =>
+            new InternalServerErrorException(
+              // 'cannot access to database with save',
+              error,
+            ),
         ),
       ),
       TE.flatten,
@@ -114,7 +118,8 @@ export class IndustryService {
   getIndustyList(): TE.TaskEither<HttpException, Industry[]> {
     return TE.tryCatch(
       () => this.industryRepository.find(),
-      (error) => new InternalServerErrorException(error),
+      () =>
+        new InternalServerErrorException('cannot access to database with find'),
     )
   }
 
@@ -129,7 +134,10 @@ export class IndustryService {
                 id: id,
               },
             }),
-          (error) => new InternalServerErrorException(error),
+          () =>
+            new InternalServerErrorException(
+              'cannot access to database with findOne',
+            ),
         ),
       ),
       // NOTE:
@@ -172,7 +180,10 @@ export class IndustryService {
       TE.map(({ targetIndustry }) =>
         TE.tryCatch(
           () => this.industryRepository.delete(targetIndustry.id),
-          (error) => new InternalServerErrorException(error),
+          () =>
+            new InternalServerErrorException(
+              'cannot access to database with delete',
+            ),
         ),
       ),
       TE.map(() => id),
