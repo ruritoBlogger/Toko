@@ -28,7 +28,7 @@ export class IndustryService {
         () => this.industryRepository.findOne({ where: { name } }),
         () =>
           new InternalServerErrorException(
-            'cannnot access to database with findOne',
+            `DB access failed with findOne name: ${name}`,
           ),
       ),
       TE.map((result) => !!result),
@@ -38,7 +38,7 @@ export class IndustryService {
   addIndustry(name: string): TE.TaskEither<HttpException, Industry> {
     return pipe(
       this.findIndustryByName(name),
-      TE.bind('canIndustryCreate', (isIndustryExist) =>
+      TE.map((isIndustryExist) =>
         pipe(
           isIndustryExist
             ? E.left(
@@ -56,7 +56,7 @@ export class IndustryService {
             () => this.industryRepository.insert(new Industry(name)),
             () =>
               new InternalServerErrorException(
-                'cannot access to database with insert',
+                `DB access failed with insert name: ${name}`,
               ),
           ),
         ),
@@ -74,7 +74,7 @@ export class IndustryService {
             }),
           () =>
             new InternalServerErrorException(
-              'cannot access to database with findOne',
+              `DB access failed with findOne id: ${insertedObjectID}`,
             ),
         ),
       ),
@@ -104,10 +104,9 @@ export class IndustryService {
         TE.tryCatch(
           () =>
             this.industryRepository.save({ id: updateTarget.id, name: name }),
-          (error) =>
+          () =>
             new InternalServerErrorException(
-              // 'cannot access to database with save',
-              error,
+              `DB access failed with save id: ${updateTarget.id}, name: ${name}`,
             ),
         ),
       ),
@@ -118,8 +117,7 @@ export class IndustryService {
   getIndustyList(): TE.TaskEither<HttpException, Industry[]> {
     return TE.tryCatch(
       () => this.industryRepository.find(),
-      () =>
-        new InternalServerErrorException('cannot access to database with find'),
+      () => new InternalServerErrorException('DB access failed with find'),
     )
   }
 
@@ -136,7 +134,7 @@ export class IndustryService {
             }),
           () =>
             new InternalServerErrorException(
-              'cannot access to database with findOne',
+              `DB access failed with findOne id: ${id}`,
             ),
         ),
       ),
@@ -161,7 +159,7 @@ export class IndustryService {
           () => this.industryRepository.delete(targetIndustry.id),
           () =>
             new InternalServerErrorException(
-              'cannot access to database with delete',
+              `DB access failed with delete id: ${targetIndustry.id}`,
             ),
         ),
       ),
