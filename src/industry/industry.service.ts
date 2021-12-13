@@ -3,10 +3,12 @@ import {
   HttpException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
+import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
@@ -113,6 +115,29 @@ export class IndustryService {
     return TE.tryCatch(
       () => this.industryRepository.find(),
       (error) => new InternalServerErrorException(error),
+    )
+  }
+
+  getIndustry(id: number): TE.TaskEither<HttpException, Industry> {
+    return pipe(
+      TE.Do,
+      TE.bind('payload', () =>
+        TE.tryCatch(
+          () =>
+            this.industryRepository.findOne({
+              where: {
+                id: id,
+              },
+            }),
+          (error) => new InternalServerErrorException(error),
+        ),
+      ),
+      TE.map(({ payload }) =>
+        TE.fromOptionK(
+          () => new NotFoundException(`industry id: ${id} is not found`),
+        )(() => O.fromNullable(payload))(),
+      ),
+      TE.flatten,
     )
   }
 }
