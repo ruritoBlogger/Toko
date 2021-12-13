@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
 
 import { Industry } from '../entities'
 import { returnWithThrowHttpException } from '../utils/returnWithThrowHttpException'
@@ -28,6 +28,13 @@ export class IndustryController {
   ): Promise<Industry> {
     return await this.service
       .updateIndustry(body.id, body.name)()
+      .then((result) => returnWithThrowHttpException(result))
+  }
+
+  @Get(':id')
+  async getIndustry(@Param() param: { id: number }): Promise<Industry> {
+    return await this.service
+      .getIndustry(param.id)()
       .then((result) => returnWithThrowHttpException(result))
   }
 }
