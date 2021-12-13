@@ -154,30 +154,9 @@ export class IndustryService {
 
   deleteIndustry(id: number): TE.TaskEither<HttpException, number> {
     return pipe(
-      TE.tryCatch(
-        () =>
-          this.industryRepository.findOne({
-            where: {
-              id: id,
-            },
-          }),
-        (error) => new NotFoundException(error),
-      ),
-      // NOTE:
-      // findOneの返り値はIndustryと評価されるが、
-      // 実際はundefinedが入るためnullチェックを挟む
-      TE.bind('targetIndustry', (payload) =>
-        pipe(
-          TE.Do,
-          TE.map(() =>
-            TE.fromOptionK(
-              () => new NotFoundException(`industry id: ${id} is not found`),
-            )(() => O.fromNullable(payload))(),
-          ),
-          TE.flatten,
-        ),
-      ),
-      TE.map(({ targetIndustry }) =>
+      this.getIndustry(id),
+      // FIXME: bindする必要はないが、mapだと削除されない
+      TE.bind('result', (targetIndustry) =>
         TE.tryCatch(
           () => this.industryRepository.delete(targetIndustry.id),
           () =>
