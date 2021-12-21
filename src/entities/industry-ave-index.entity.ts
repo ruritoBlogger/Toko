@@ -6,6 +6,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
+import type { Props } from '../industry-ave-index/type'
+
 @Entity()
 export class IndustryAveIndex {
   @PrimaryGeneratedColumn()
@@ -56,21 +58,21 @@ export class IndustryAveIndex {
   @UpdateDateColumn()
   readonly updatedAt: Date
 
-  constructor(
-    industryID: number,
-    announcementDate: Date,
-    capitalAdequacyRatio: number,
-    roe: number,
-    roa: number,
-    per: number,
-    pbr: number,
-    eps: number,
-    pcfr: number,
-    yieldGap: number,
-    ebitda: number,
-    ev: number,
-    ev_ebitda: number,
-  ) {
+  constructor({
+    industryID,
+    announcementDate,
+    capitalAdequacyRatio,
+    roe,
+    roa,
+    per,
+    pbr,
+    eps,
+    pcfr,
+    yieldGap,
+    ebitda,
+    ev,
+    ev_ebitda,
+  }: Props) {
     this.industryID = industryID
     this.announcementDate = announcementDate
     this.capitalAdequacyRatio = capitalAdequacyRatio
