@@ -19,8 +19,4 @@ export class Industry {
 
   @UpdateDateColumn()
   readonly updatedAt: Date
-
-  constructor(name: string) {
-    this.name = name
-  }
 }

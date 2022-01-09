@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { Industry } from './entities/industry.entity'
+import { Industry, IndustryAveIndex } from './entities'
 import { IndustryModule } from './industry/industry.module'
-import { IndustryAveIndexController } from './industry-ave-index/industry-ave-index.controller'
 import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.module'
-import { IndustryAveIndexService } from './industry-ave-index/industry-ave-index.service'
 
 @Module({
   imports: [
@@ -16,13 +14,11 @@ import { IndustryAveIndexService } from './industry-ave-index/industry-ave-index
       username: 'root',
       password: 'password',
       database: 'nestday7',
-      entities: [Industry],
+      entities: [Industry, IndustryAveIndex],
       synchronize: true,
     }),
     IndustryModule,
     IndustryAveIndexModule,
   ],
-  providers: [IndustryAveIndexService],
-  controllers: [IndustryAveIndexController],
 })
 export class AppModule {}

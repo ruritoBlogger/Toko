@@ -3,6 +3,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { Industry } from '../entities'
 import { returnWithThrowHttpException } from '../utils/returnWithThrowHttpException'
 import { IndustryService } from './industry.service'
+import type { Props } from './type'
 
 @Controller('industry')
 export class IndustryController {
@@ -16,18 +17,18 @@ export class IndustryController {
   }
 
   @Post()
-  async addIndustry(@Body() body: { name: string }): Promise<Industry> {
+  async addIndustry(@Body() body: { props: Props }): Promise<Industry> {
     return await this.service
-      .addIndustry(body.name)()
+      .addIndustry(body.props)()
       .then((result) => returnWithThrowHttpException(result))
   }
 
   @Put()
   async updateIndustry(
-    @Body() body: { id: number; name: string },
+    @Body() body: { id: number; props: Props },
   ): Promise<Industry> {
     return await this.service
-      .updateIndustry(body.id, body.name)()
+      .updateIndustry(body.id, body.props)()
       .then((result) => returnWithThrowHttpException(result))
   }
 

@@ -40,8 +40,8 @@ describe('IndustryService', () => {
   })
 
   it('should add industry with correct param', async () => {
-    const name = 'correct_param'
-    const result = await service.addIndustry(name)()
+    const props = { name: 'correct_param' }
+    const result = await service.addIndustry(props)()
 
     // FIXME: ここで削除したくもないし、magic numberも使いたくもない
     await service.deleteIndustry(1)()
@@ -57,9 +57,9 @@ describe('IndustryService', () => {
   })
 
   it('should not add industry with same name param', async () => {
-    const name = 'same_name_param'
-    await service.addIndustry(name)()
-    const secondIndustry = await service.addIndustry(name)()
+    const props = { name: 'same_name_param' }
+    await service.addIndustry(props)()
+    const secondIndustry = await service.addIndustry(props)()
 
     // FIXME: ここで削除したくもないし、magic numberも使いたくもない
     await service.deleteIndustry(2)()
@@ -81,7 +81,7 @@ describe('IndustryService', () => {
 
   it('should get correct industry data', async () => {
     const industry = pipe(
-      await service.addIndustry('test')(),
+      await service.addIndustry({ name: 'test' })(),
       E.getOrElseW(() => 'addIndustry failed...'),
     )
     const result = await service.getIndustyList()()
@@ -106,7 +106,7 @@ describe('IndustryService', () => {
 
   it('should delete with correct data', async () => {
     const industryID = pipe(
-      await service.addIndustry('test')(),
+      await service.addIndustry({ name: 'test' })(),
       E.map((result) => result.id),
       E.getOrElseW(() => -100),
     )
@@ -128,7 +128,7 @@ describe('IndustryService', () => {
 
   it('should get correct data', async () => {
     const industryID = pipe(
-      await service.addIndustry('test')(),
+      await service.addIndustry({ name: 'test' })(),
       E.map((result) => result.id),
       E.getOrElseW(() => -100),
     )
