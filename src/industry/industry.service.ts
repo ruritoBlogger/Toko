@@ -14,6 +14,7 @@ import { Repository } from 'typeorm'
 
 import { Industry } from '../entities/'
 import { selectIdentifyNumberFromInsert } from '../utils/validateIdentify'
+import type { Props } from './type'
 
 @Injectable()
 export class IndustryService {
@@ -22,27 +23,29 @@ export class IndustryService {
     private readonly industryRepository: Repository<Industry>,
   ) {}
 
-  findIndustryByName(name: string): TE.TaskEither<HttpException, boolean> {
+  findIndustryByName(props: Props): TE.TaskEither<HttpException, boolean> {
     return pipe(
       TE.tryCatch(
-        () => this.industryRepository.findOne({ where: { name } }),
+        () => this.industryRepository.findOne({ where: { name: props.name } }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne name: ${name}`,
+            `DB access failed with findOne name: ${props.name}`,
           ),
       ),
       TE.map((result) => !!result),
     )
   }
 
-  addIndustry(name: string): TE.TaskEither<HttpException, Industry> {
+  addIndustry(props: Props): TE.TaskEither<HttpException, Industry> {
     return pipe(
-      this.findIndustryByName(name),
+      this.findIndustryByName(props),
       TE.map((isIndustryExist) =>
         pipe(
           isIndustryExist
             ? E.left(
-                new ConflictException(`industry ${name} is already existed.`),
+                new ConflictException(
+                  `industry ${props.name} is already existed.`,
+                ),
               )
             : E.right(true),
           TE.fromEither,
@@ -53,10 +56,10 @@ export class IndustryService {
       TE.bind('payload', () =>
         pipe(
           TE.tryCatch(
-            () => this.industryRepository.insert(new Industry(name)),
+            () => this.industryRepository.insert(props),
             () =>
               new InternalServerErrorException(
-                `DB access failed with insert name: ${name}`,
+                `DB access failed with insert props: ${props.name}`,
               ),
           ),
         ),
@@ -84,15 +87,17 @@ export class IndustryService {
 
   updateIndustry(
     id: number,
-    name: string,
+    props: Props,
   ): TE.TaskEither<HttpException, Industry> {
     return pipe(
-      this.findIndustryByName(name),
+      this.findIndustryByName(props),
       TE.map((isSameNameIndustryExist) =>
         pipe(
           isSameNameIndustryExist
             ? E.left(
-                new ConflictException(`industry ${name} is already existed.`),
+                new ConflictException(
+                  `industry ${props.name} is already existed.`,
+                ),
               )
             : E.right(true),
           TE.fromEither,
@@ -103,10 +108,13 @@ export class IndustryService {
       TE.map(({ updateTarget }) =>
         TE.tryCatch(
           () =>
-            this.industryRepository.save({ id: updateTarget.id, name: name }),
+            this.industryRepository.save({
+              id: updateTarget.id,
+              name: props.name,
+            }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with save id: ${updateTarget.id}, name: ${name}`,
+              `DB access failed with save id: ${updateTarget.id}, name: ${props.name}`,
             ),
         ),
       ),

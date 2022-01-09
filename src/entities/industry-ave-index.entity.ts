@@ -1,12 +1,11 @@
 import {
   Column,
   CreateDateColumn,
+  Double,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-
-import type { Props } from '../industry-ave-index/type'
 
 @Entity()
 export class IndustryAveIndex {
@@ -19,37 +18,37 @@ export class IndustryAveIndex {
   @Column()
   announcementDate: Date
 
-  @Column()
+  @Column({ type: 'double' })
   capitalAdequacyRatio: number
 
-  @Column()
+  @Column({ type: 'double' })
   roe: number
 
-  @Column()
+  @Column({ type: 'double' })
   roa: number
 
-  @Column()
+  @Column({ type: 'double' })
   per: number
 
-  @Column()
+  @Column({ type: 'double' })
   pbr: number
 
-  @Column()
+  @Column({ type: 'double' })
   eps: number
 
-  @Column()
+  @Column({ type: 'double' })
   pcfr: number
 
-  @Column()
+  @Column({ type: 'double' })
   yieldGap: number
 
-  @Column()
+  @Column({ type: 'double' })
   ebitda: number
 
-  @Column()
+  @Column({ type: 'double' })
   ev: number
 
-  @Column()
+  @Column({ type: 'double' })
   ev_ebitda: number
 
   @CreateDateColumn()
@@ -57,34 +56,4 @@ export class IndustryAveIndex {
 
   @UpdateDateColumn()
   readonly updatedAt: Date
-
-  constructor({
-    industryID,
-    announcementDate,
-    capitalAdequacyRatio,
-    roe,
-    roa,
-    per,
-    pbr,
-    eps,
-    pcfr,
-    yieldGap,
-    ebitda,
-    ev,
-    ev_ebitda,
-  }: Props) {
-    this.industryID = industryID
-    this.announcementDate = announcementDate
-    this.capitalAdequacyRatio = capitalAdequacyRatio
-    this.roe = roe
-    this.roa = roa
-    this.per = per
-    this.pbr = pbr
-    this.eps = eps
-    this.pcfr = pcfr
-    this.yieldGap = yieldGap
-    this.ebitda = ebitda
-    this.ev = ev
-    this.ev_ebitda = ev_ebitda
-  }
 }

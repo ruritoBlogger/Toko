@@ -62,10 +62,7 @@ export class IndustryAveIndexService {
       TE.bind('payload', () =>
         pipe(
           TE.tryCatch(
-            () =>
-              this.industryAveIndexRepository.insert(
-                new IndustryAveIndex(props),
-              ),
+            () => this.industryAveIndexRepository.insert(props),
             () =>
               new InternalServerErrorException(
                 `DB access failed with insert props: ${props}`,
