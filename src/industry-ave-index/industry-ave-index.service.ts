@@ -12,9 +12,10 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert } from '../utils/validateIdentify'
+import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
 import { IndustryAveIndex } from './../entities/industry-ave-index.entity'
 import type { Props } from './type'
+import { PropsCodec } from './type'
 
 @Injectable()
 export class IndustryAveIndexService {
@@ -44,7 +45,10 @@ export class IndustryAveIndexService {
 
   addIndex(props: Props): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
-      this.findSameIndex(props.announcementDate, props.industryID),
+      validateProps(props, PropsCodec),
+      TE.map(() =>
+        this.findSameIndex(props.announcementDate, props.industryID),
+      ),
       TE.map((isIndexExist) =>
         pipe(
           isIndexExist
@@ -96,7 +100,10 @@ export class IndustryAveIndexService {
     props: Props,
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
-      this.findSameIndex(props.announcementDate, props.industryID),
+      validateProps(props, PropsCodec),
+      TE.map(() =>
+        this.findSameIndex(props.announcementDate, props.industryID),
+      ),
       TE.map((isSameIndexExist) =>
         pipe(
           isSameIndexExist

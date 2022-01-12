@@ -13,8 +13,10 @@ import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
 import { Industry } from '../entities/'
+import { validateProps } from '../utils'
 import { selectIdentifyNumberFromInsert } from '../utils/validateIdentify'
 import type { Props } from './type'
+import { PropsCodec } from './type'
 
 @Injectable()
 export class IndustryService {
@@ -38,7 +40,8 @@ export class IndustryService {
 
   addIndustry(props: Props): TE.TaskEither<HttpException, Industry> {
     return pipe(
-      this.findIndustryByName(props),
+      validateProps(props, PropsCodec),
+      TE.map(() => this.findIndustryByName(props)),
       TE.map((isIndustryExist) =>
         pipe(
           isIndustryExist
@@ -90,7 +93,8 @@ export class IndustryService {
     props: Props,
   ): TE.TaskEither<HttpException, Industry> {
     return pipe(
-      this.findIndustryByName(props),
+      validateProps(props, PropsCodec),
+      TE.map(() => this.findIndustryByName(props)),
       TE.map((isSameNameIndustryExist) =>
         pipe(
           isSameNameIndustryExist
