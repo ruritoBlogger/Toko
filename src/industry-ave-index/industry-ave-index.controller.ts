@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 
 import { IndustryAveIndex } from '../entities'
-import { returnWithThrowHttpException } from '../utils/returnWithThrowHttpException'
+import { returnWithThrowHttpException } from '../utils'
 import { IndustryAveIndexService } from './industry-ave-index.service'
 import type { Props } from './type'
 

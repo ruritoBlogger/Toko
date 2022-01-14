@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 
-import { Industry } from '../entities/industry.entity'
+import { Industry, IndustryAveIndex } from '../entities'
 import { IndustryService } from './industry.service'
 
 describe('IndustryService', () => {
@@ -16,11 +16,11 @@ describe('IndustryService', () => {
           // FIXME: 本当はmysqlでやりたい
           type: 'sqlite',
           database: ':memory:',
-          entities: [Industry],
+          entities: [Industry, IndustryAveIndex],
           synchronize: true,
           keepConnectionAlive: true,
         }),
-        TypeOrmModule.forFeature([Industry]),
+        TypeOrmModule.forFeature([Industry, IndustryAveIndex]),
       ],
       providers: [IndustryService],
     }).compile()

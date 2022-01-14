@@ -13,8 +13,7 @@ import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
 import { Industry } from '../entities/'
-import { validateProps } from '../utils'
-import { selectIdentifyNumberFromInsert } from '../utils/validateIdentify'
+import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
 import type { Props } from './type'
 import { PropsCodec } from './type'
 

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { Industry } from './../entities/industry.entity'
+import { Industry } from './../entities'
 import { IndustryController } from './industry.controller'
 import { IndustryService } from './industry.service'
 
