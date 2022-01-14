@@ -1,11 +1,14 @@
 import {
   Column,
   CreateDateColumn,
-  Double,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
+
+import { Industry } from './industry.entity'
 
 @Entity()
 export class IndustryAveIndex {
@@ -14,6 +17,10 @@ export class IndustryAveIndex {
 
   @Column()
   industryID: number
+
+  @ManyToOne(() => Industry, (industry) => industry.industryAveIndex)
+  @JoinColumn([{ name: 'industryID', referencedColumnName: 'id' }])
+  industry: Industry
 
   @Column()
   announcementDate: Date

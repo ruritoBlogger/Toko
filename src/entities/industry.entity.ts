@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
+
+import { IndustryAveIndex } from './industry-ave-index.entity'
 
 @Entity()
 export class Industry {
@@ -19,4 +22,10 @@ export class Industry {
 
   @UpdateDateColumn()
   readonly updatedAt: Date
+
+  @OneToMany(
+    () => IndustryAveIndex,
+    (industryAveIndex) => industryAveIndex.industry,
+  )
+  industryAveIndex: IndustryAveIndex
 }
