@@ -1,6 +1,5 @@
 {
-    "type": "sqlite",
-    "database": "data/dev.sqlite",
+    "type": "mysql",
     "entities": [
         "dist/entities/**/*.entity.js"
     ],
