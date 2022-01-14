@@ -67,9 +67,10 @@ export class IndustryAveIndexService {
         pipe(
           TE.tryCatch(
             () => this.industryAveIndexRepository.insert(props),
+            // NOTE: insertに失敗 ≒ industryIDが存在しない
             () =>
-              new InternalServerErrorException(
-                `DB access failed with insert props: ${props}`,
+              new NotFoundException(
+                `DB access failed with insert IndustryAveIndex with industryID: ${props.industryID}`,
               ),
           ),
         ),
@@ -125,9 +126,10 @@ export class IndustryAveIndexService {
               ...props,
               id: updateTarget.id,
             }),
+          // NOTE: insertに失敗 ≒ industryIDが存在しない
           () =>
-            new InternalServerErrorException(
-              `DB access failed with save props: ${props}, ID: ${updateTarget.id}`,
+            new NotFoundException(
+              `DB access failed with save IndustryAveIndex with industryID: ${props.industryID}`,
             ),
         ),
       ),
