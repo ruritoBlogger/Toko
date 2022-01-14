@@ -53,7 +53,7 @@ describe('IndustryService', () => {
         E.map((result) => result.name),
         E.getOrElse(() => 'this test will fail'),
       ),
-    ).toBe(name)
+    ).toBe(props.name)
   })
 
   it('should not add industry with same name param', async () => {
