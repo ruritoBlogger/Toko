@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { IndustryAveIndex } from './../entities/industry-ave-index.entity'
+import { IndustryAveIndex } from './../entities'
 import { IndustryAveIndexController } from './industry-ave-index.controller'
 import { IndustryAveIndexService } from './industry-ave-index.service'
 

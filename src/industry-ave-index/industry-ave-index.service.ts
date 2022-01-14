@@ -13,7 +13,7 @@ import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
 import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
-import { IndustryAveIndex } from './../entities/industry-ave-index.entity'
+import { IndustryAveIndex } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
 

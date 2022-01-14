@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 
 import { Industry } from '../entities'
-import { returnWithThrowHttpException } from '../utils/returnWithThrowHttpException'
+import { returnWithThrowHttpException } from '../utils'
 import { IndustryService } from './industry.service'
 import type { Props } from './type'
 
