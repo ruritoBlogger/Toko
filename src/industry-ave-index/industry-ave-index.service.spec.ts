@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
-import { serialize } from 'v8'
 
 import { Industry, IndustryAveIndex } from '../entities'
 import { IndustryService } from '../industry/industry.service'
@@ -13,22 +12,6 @@ describe('IndustryAveIndexService', () => {
   let service: IndustryAveIndexService
   const props: Props = {
     industryID: 1,
-    announcementDate: new Date(),
-    capitalAdequacyRatio: 1.0,
-    roe: 1.0,
-    roa: 1.0,
-    per: 1.0,
-    pbr: 1.0,
-    eps: 1.0,
-    pcfr: 1.0,
-    yieldGap: 1.0,
-    ebitda: 1.0,
-    ev: 1.0,
-    ev_ebitda: 1.0,
-  }
-
-  const invalidProps: Props = {
-    industryID: 3,
     announcementDate: new Date(),
     capitalAdequacyRatio: 1.0,
     roe: 1.0,
@@ -78,6 +61,22 @@ describe('IndustryAveIndexService', () => {
   })
 
   it('should not created with invalid industryID param', async () => {
+    const invalidProps: Props = {
+      industryID: 3,
+      announcementDate: new Date(),
+      capitalAdequacyRatio: 1.0,
+      roe: 1.0,
+      roa: 1.0,
+      per: 1.0,
+      pbr: 1.0,
+      eps: 1.0,
+      pcfr: 1.0,
+      yieldGap: 1.0,
+      ebitda: 1.0,
+      ev: 1.0,
+      ev_ebitda: 1.0,
+    }
+
     const result = await service.addIndex(invalidProps)()
     expect(E.isLeft(result)).toBe(true)
   })
@@ -181,6 +180,53 @@ describe('IndustryAveIndexService', () => {
 
     // FIXME: ここで削除したくもない
     await service.deleteIndex(indexID)()
+
+    expect(E.isRight(result)).toBe(true)
+    expect(
+      pipe(
+        result,
+        E.map((result) => result.id),
+        E.getOrElseW(() => 'this test will fail'),
+      ),
+    ).toBe(indexID)
+  })
+
+  // for getCurrentIndex
+  it('should not get current data with no data', async () => {
+    const result = await service.getCurrentIndex()()
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should get correct current data', async () => {
+    const oldProps: Props = {
+      industryID: 1,
+      announcementDate: new Date('2000/1/1'),
+      capitalAdequacyRatio: 1.0,
+      roe: 1.0,
+      roa: 1.0,
+      per: 1.0,
+      pbr: 1.0,
+      eps: 1.0,
+      pcfr: 1.0,
+      yieldGap: 1.0,
+      ebitda: 1.0,
+      ev: 1.0,
+      ev_ebitda: 1.0,
+    }
+
+    const payload = await service.addIndex(props)()
+    await service.addIndex(oldProps)()
+    const indexID = pipe(
+      payload,
+      E.map((result) => result.id),
+      E.getOrElseW(() => 'this test will fail'),
+    )
+
+    const result = await service.getCurrentIndex()()
+
+    // FIXME: ここで削除したくもない
+    await service.deleteIndex(1)()
+    await service.deleteIndex(2)()
 
     expect(E.isRight(result)).toBe(true)
     expect(
