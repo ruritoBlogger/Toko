@@ -35,13 +35,12 @@ export class IndustryAveIndexController {
       .then((result) => returnWithThrowHttpException(result))
   }
 
-  /*
-		TODO: 実装をやる
-	@Get('index/current')
-	async getCurrentIndex(): Promise<IndustryAveIndex> {
-		return await this.service
-	}
-	*/
+  @Get('index/current')
+  async getCurrentIndex(): Promise<IndustryAveIndex> {
+    return await this.service
+      .getCurrentIndex()()
+      .then((result) => returnWithThrowHttpException(result))
+  }
 
   @Get('index/:id')
   async getIndex(@Param() param: { id: number }): Promise<IndustryAveIndex> {
