@@ -1,9 +1,8 @@
 import * as t from 'io-ts'
-import * as tt from 'io-ts-types'
 
 export const PropsCodec = t.type({
   industryID: t.number,
-  announcementDate: t.union([tt.date, t.string]),
+  announcementDate: t.string,
   capitalAdequacyRatio: t.number,
   roe: t.number,
   roa: t.number,

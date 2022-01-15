@@ -25,7 +25,7 @@ export class IndustryAveIndexService {
   ) {}
 
   findSameIndex(
-    announcementDate: Date | string,
+    announcementDate: string,
     industryID: number,
   ): TE.TaskEither<HttpException, boolean> {
     return pipe(
