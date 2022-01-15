@@ -23,7 +23,7 @@ export class IndustryAveIndexService {
     private readonly industryAveIndexRepository: Repository<IndustryAveIndex>,
   ) {}
 
-  findSameIndex(
+  rejectSameIndex(
     props: Props,
     industryID: number,
   ): TE.TaskEither<HttpException, Props> {
@@ -56,7 +56,7 @@ export class IndustryAveIndexService {
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.chain(() => this.findSameIndex(props, industryID)),
+      TE.chain(() => this.rejectSameIndex(props, industryID)),
       TE.chain((correctProps) =>
         TE.tryCatch(
           () =>
@@ -94,7 +94,7 @@ export class IndustryAveIndexService {
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.chain(() => this.findSameIndex(props, industryID)),
+      TE.chain(() => this.rejectSameIndex(props, industryID)),
       TE.chain(() => this.getIndex(id, industryID)),
       TE.chain((updateTarget) =>
         TE.tryCatch(

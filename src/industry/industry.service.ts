@@ -23,7 +23,7 @@ export class IndustryService {
     private readonly industryRepository: Repository<Industry>,
   ) {}
 
-  findIndustryByName(props: Props): TE.TaskEither<HttpException, Props> {
+  rejectSameIndustry(props: Props): TE.TaskEither<HttpException, Props> {
     return pipe(
       TE.tryCatch(
         () => this.industryRepository.findOne({ where: { name: props.name } }),
@@ -47,7 +47,7 @@ export class IndustryService {
   addIndustry(props: Props): TE.TaskEither<HttpException, Industry> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.chain(() => this.findIndustryByName(props)),
+      TE.chain(() => this.rejectSameIndustry(props)),
       TE.chain((correctProps) =>
         TE.tryCatch(
           () => this.industryRepository.insert(correctProps),
@@ -81,7 +81,7 @@ export class IndustryService {
   ): TE.TaskEither<HttpException, Industry> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.chain(() => this.findIndustryByName(props)),
+      TE.chain(() => this.rejectSameIndustry(props)),
       TE.chain(() => this.getIndustry(id)),
       TE.chain((updateTarget) =>
         TE.tryCatch(
