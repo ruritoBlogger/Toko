@@ -12,7 +12,7 @@ describe('IndustryAveIndexService', () => {
   let service: IndustryAveIndexService
   const props: Props = {
     industryID: 1,
-    announcementDate: new Date(),
+    announcementDate: '2021/1/1',
     capitalAdequacyRatio: 1.0,
     roe: 1.0,
     roa: 1.0,
@@ -63,7 +63,7 @@ describe('IndustryAveIndexService', () => {
   it('should not created with invalid industryID param', async () => {
     const invalidProps: Props = {
       industryID: 3,
-      announcementDate: new Date(),
+      announcementDate: '2021/1/1',
       capitalAdequacyRatio: 1.0,
       roe: 1.0,
       roa: 1.0,
@@ -94,7 +94,7 @@ describe('IndustryAveIndexService', () => {
         E.map((result) => result.announcementDate),
         E.getOrElseW(() => 'this test will fail'),
       ),
-    ).toStrictEqual(props.announcementDate)
+    ).toStrictEqual(new Date(props.announcementDate))
   })
 
   it('should not add industry with same announcementDate param', async () => {
@@ -200,7 +200,7 @@ describe('IndustryAveIndexService', () => {
   it('should get correct current data', async () => {
     const oldProps: Props = {
       industryID: 1,
-      announcementDate: new Date('2000/1/1'),
+      announcementDate: '2000/1/1',
       capitalAdequacyRatio: 1.0,
       roe: 1.0,
       roa: 1.0,
