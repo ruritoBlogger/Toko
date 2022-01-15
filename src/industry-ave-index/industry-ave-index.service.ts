@@ -6,7 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
@@ -25,21 +24,29 @@ export class IndustryAveIndexService {
   ) {}
 
   findSameIndex(
-    announcementDate: string,
+    props: Props,
     industryID: number,
-  ): TE.TaskEither<HttpException, boolean> {
+  ): TE.TaskEither<HttpException, Props> {
     return pipe(
       TE.tryCatch(
         () =>
           this.industryAveIndexRepository.findOne({
-            where: { announcementDate, industryID },
+            where: { announcementDate: props.announcementDate, industryID },
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne announcementDate: ${announcementDate}, industryID: ${industryID}`,
+            `DB access failed with findOne announcementDate: ${props.announcementDate}, industryID: ${industryID}`,
           ),
       ),
-      TE.map((result) => !!result),
+      TE.chain((result) =>
+        // NOTE: 存在する場合 = 重複データありなので失敗扱い
+        TE.fromOptionK(
+          () =>
+            new ConflictException(
+              `IndustryAveIndex ${result} is already existed.`,
+            ),
+        )(() => O.some(props))(),
+      ),
     )
   }
 
@@ -49,40 +56,21 @@ export class IndustryAveIndexService {
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.map(() => this.findSameIndex(props.announcementDate, industryID)),
-      TE.map((isIndexExist) =>
-        pipe(
-          isIndexExist
-            ? E.left(
-                new ConflictException(
-                  `IndustryAveIndex props: ${props} is already existed.`,
-                ),
-              )
-            : E.right(true),
-          TE.fromEither,
+      TE.chain(() => this.findSameIndex(props, industryID)),
+      TE.chain((correctProps) =>
+        TE.tryCatch(
+          () =>
+            this.industryAveIndexRepository.insert(
+              Object.assign(correctProps, { industryID: industryID }),
+            ),
+          () =>
+            new NotFoundException(
+              `DB access failed with insert IndustryAveIndex: ${correctProps}`,
+            ),
         ),
       ),
-      // mapが流れてくる === データの重複が無いと判断
-      // FIXME: 汚い
-      TE.bind('payload', () =>
-        pipe(
-          TE.tryCatch(
-            () =>
-              this.industryAveIndexRepository.insert(
-                Object.assign(props, { industryID: industryID }),
-              ),
-            // NOTE: insertに失敗 ≒ industryIDが存在しない
-            () =>
-              new NotFoundException(
-                `DB access failed with insert IndustryAveIndex with industryID: ${industryID}`,
-              ),
-          ),
-        ),
-      ),
-      TE.bind('insertedObjectID', ({ payload }) =>
-        selectIdentifyNumberFromInsert(payload),
-      ),
-      TE.map(({ insertedObjectID }) =>
+      TE.chain((payload) => selectIdentifyNumberFromInsert(payload)),
+      TE.chain((insertedObjectID) =>
         TE.tryCatch(
           () =>
             this.industryAveIndexRepository.findOne({
@@ -96,7 +84,6 @@ export class IndustryAveIndexService {
             ),
         ),
       ),
-      TE.flatten,
     )
   }
 
@@ -107,22 +94,9 @@ export class IndustryAveIndexService {
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.map(() => this.findSameIndex(props.announcementDate, industryID)),
-      TE.map((isSameIndexExist) =>
-        pipe(
-          isSameIndexExist
-            ? E.left(
-                new ConflictException(
-                  `IndustryAveIndex props: ${props} is already existed.`,
-                ),
-              )
-            : E.right(true),
-          TE.fromEither,
-        ),
-      ),
-      // mapが流れてくる === 名前の重複が無い
-      TE.bind('updateTarget', () => this.getIndex(id, industryID)),
-      TE.map(({ updateTarget }) =>
+      TE.chain(() => this.findSameIndex(props, industryID)),
+      TE.chain(() => this.getIndex(id, industryID)),
+      TE.chain((updateTarget) =>
         TE.tryCatch(
           () =>
             this.industryAveIndexRepository.save({
@@ -130,14 +104,12 @@ export class IndustryAveIndexService {
               industryID: industryID,
               id: updateTarget.id,
             }),
-          // NOTE: insertに失敗 ≒ industryIDが存在しない
           () =>
             new NotFoundException(
-              `DB access failed with save IndustryAveIndex with industryID: ${industryID}`,
+              `DB access failed with save IndustryAveIndex props: ${updateTarget}, industryID: ${industryID}, id: ${id}`,
             ),
         ),
       ),
-      TE.flatten,
     )
   }
 
@@ -158,32 +130,23 @@ export class IndustryAveIndexService {
     industryID: number,
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
-      TE.Do,
-      TE.bind('payload', () =>
-        TE.tryCatch(
-          () =>
-            this.industryAveIndexRepository.findOne({
-              where: {
-                id: id,
-                industryID: industryID,
-              },
-            }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed with findOne id: ${id}`,
-            ),
-        ),
+      TE.tryCatch(
+        () =>
+          this.industryAveIndexRepository.findOne({
+            where: {
+              id: id,
+              industryID: industryID,
+            },
+          }),
+        () =>
+          new InternalServerErrorException(
+            `DB access failed with findOne id: ${id}`,
+          ),
       ),
-      // NOTE:
-      // findOneの返り値はIndustryAveIndexと評価されるが
-      // 実際はundefinedが入るためnullチェックを挟む
-      TE.map(({ payload }) =>
-        TE.fromOptionK(
-          () =>
-            new NotFoundException(`industryAveIndex id: ${id} is not found`),
-        )(() => O.fromNullable(payload))(),
-      ),
-      TE.flatten,
+      // NOTE: findOneのresultはIndustryAveIndexではなくOption<IndustryAveIndex>
+      TE.chainOptionK(
+        () => new NotFoundException(`industryAveIndex id: ${id} is not found`),
+      )((payload) => O.fromNullable(payload)),
     )
   }
 
@@ -192,23 +155,20 @@ export class IndustryAveIndexService {
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       TE.Do,
-      TE.bind('indexList', () => this.getIndexList(industryID)),
-      TE.map(({ indexList }) =>
+      TE.chain(() => this.getIndexList(industryID)),
+      TE.map((indexList) =>
         // NOTE: 一番announcementDateが最近のものを先頭にする
         indexList.sort(
           (a, b) => b.announcementDate.getTime() - a.announcementDate.getTime(),
         ),
       ),
       TE.map((sortedList) => sortedList.shift()),
-      TE.map((maybeCurrentIndex) =>
-        TE.fromOptionK(
-          () =>
-            new NotFoundException(
-              `industryAveIndex industryID: ${industryID} is not found`,
-            ),
-        )(() => O.fromNullable(maybeCurrentIndex))(),
-      ),
-      TE.flatten,
+      TE.chainOptionK(
+        () =>
+          new NotFoundException(
+            `industryAveIndex industryID: ${industryID} is not found`,
+          ),
+      )((maybeCurrentIndex) => O.fromNullable(maybeCurrentIndex)),
     )
   }
 
@@ -218,8 +178,7 @@ export class IndustryAveIndexService {
   ): TE.TaskEither<HttpException, number> {
     return pipe(
       this.getIndex(id, industryID),
-      // FIXME: bindする必要は無いが、mapだと削除されない
-      TE.bind('result', (targetIndex) =>
+      TE.chain((targetIndex) =>
         TE.tryCatch(
           () => this.industryAveIndexRepository.delete(targetIndex.id),
           () =>

@@ -6,7 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
@@ -24,7 +23,7 @@ export class IndustryService {
     private readonly industryRepository: Repository<Industry>,
   ) {}
 
-  findIndustryByName(props: Props): TE.TaskEither<HttpException, boolean> {
+  findIndustryByName(props: Props): TE.TaskEither<HttpException, Props> {
     return pipe(
       TE.tryCatch(
         () => this.industryRepository.findOne({ where: { name: props.name } }),
@@ -33,43 +32,33 @@ export class IndustryService {
             `DB access failed with findOne name: ${props.name}`,
           ),
       ),
-      TE.map((result) => !!result),
+      TE.chain((result) =>
+        // NOTE: 存在する場合 = 重複データありなので失敗扱い
+        TE.fromOptionK(
+          () =>
+            new ConflictException(
+              `industry ${result.name} is already existed.`,
+            ),
+        )(() => O.some(props))(),
+      ),
     )
   }
 
   addIndustry(props: Props): TE.TaskEither<HttpException, Industry> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.map(() => this.findIndustryByName(props)),
-      TE.map((isIndustryExist) =>
-        pipe(
-          isIndustryExist
-            ? E.left(
-                new ConflictException(
-                  `industry ${props.name} is already existed.`,
-                ),
-              )
-            : E.right(true),
-          TE.fromEither,
+      TE.chain(() => this.findIndustryByName(props)),
+      TE.chain((correctProps) =>
+        TE.tryCatch(
+          () => this.industryRepository.insert(correctProps),
+          () =>
+            new InternalServerErrorException(
+              `DB access failed with insert props: ${correctProps.name}`,
+            ),
         ),
       ),
-      // mapが流れてくる(=前のbindでE.leftが流れてこない)時点で処理が成功していると判断
-      // FIXME: ゴリ押しコードはつらいのら〜〜〜
-      TE.bind('payload', () =>
-        pipe(
-          TE.tryCatch(
-            () => this.industryRepository.insert(props),
-            () =>
-              new InternalServerErrorException(
-                `DB access failed with insert props: ${props.name}`,
-              ),
-          ),
-        ),
-      ),
-      TE.bind('insertedObjectID', ({ payload }) =>
-        selectIdentifyNumberFromInsert(payload),
-      ),
-      TE.map(({ insertedObjectID }) =>
+      TE.chain((payload) => selectIdentifyNumberFromInsert(payload)),
+      TE.chain((insertedObjectID) =>
         TE.tryCatch(
           () =>
             this.industryRepository.findOne({
@@ -83,7 +72,6 @@ export class IndustryService {
             ),
         ),
       ),
-      TE.flatten,
     )
   }
 
@@ -93,22 +81,9 @@ export class IndustryService {
   ): TE.TaskEither<HttpException, Industry> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.map(() => this.findIndustryByName(props)),
-      TE.map((isSameNameIndustryExist) =>
-        pipe(
-          isSameNameIndustryExist
-            ? E.left(
-                new ConflictException(
-                  `industry ${props.name} is already existed.`,
-                ),
-              )
-            : E.right(true),
-          TE.fromEither,
-        ),
-      ),
-      // mapが流れてくる時点で名前被りがないと判断
-      TE.bind('updateTarget', () => this.getIndustry(id)),
-      TE.map(({ updateTarget }) =>
+      TE.chain(() => this.findIndustryByName(props)),
+      TE.chain(() => this.getIndustry(id)),
+      TE.chain((updateTarget) =>
         TE.tryCatch(
           () =>
             this.industryRepository.save({
@@ -121,7 +96,6 @@ export class IndustryService {
             ),
         ),
       ),
-      TE.flatten,
     )
   }
 
@@ -134,38 +108,29 @@ export class IndustryService {
 
   getIndustry(id: number): TE.TaskEither<HttpException, Industry> {
     return pipe(
-      TE.Do,
-      TE.bind('payload', () =>
-        TE.tryCatch(
-          () =>
-            this.industryRepository.findOne({
-              where: {
-                id: id,
-              },
-            }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed with findOne id: ${id}`,
-            ),
-        ),
+      TE.tryCatch(
+        () =>
+          this.industryRepository.findOne({
+            where: {
+              id: id,
+            },
+          }),
+        () =>
+          new InternalServerErrorException(
+            `DB access failed with findOne id: ${id}`,
+          ),
       ),
-      // NOTE:
-      // findOneの返り値はIndustryと評価されるが、
-      // 実際はundefinedが入るためnullチェックを挟む
-      TE.map(({ payload }) =>
-        TE.fromOptionK(
-          () => new NotFoundException(`industry id: ${id} is not found`),
-        )(() => O.fromNullable(payload))(),
-      ),
-      TE.flatten,
+      // NOTE: findOneのresultはIndustryではなくOption<Industry>
+      TE.chainOptionK(
+        () => new NotFoundException(`industry id: ${id} is not found`),
+      )((payload) => O.fromNullable(payload)),
     )
   }
 
   deleteIndustry(id: number): TE.TaskEither<HttpException, number> {
     return pipe(
       this.getIndustry(id),
-      // FIXME: bindする必要はないが、mapだと削除されない
-      TE.bind('result', (targetIndustry) =>
+      TE.chain((targetIndustry) =>
         TE.tryCatch(
           () => this.industryRepository.delete(targetIndustry.id),
           () =>

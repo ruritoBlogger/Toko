@@ -8,7 +8,7 @@ import type { Props } from './type'
 // NOTE: industryAveIndexはIndustryに依存している
 // なので、routingもindustryから生やす
 // Industryのcontrollerに生やすと数が多すぎてつらいのでこっちに分割しました
-@Controller('industry/:id')
+@Controller('industry/:industryID')
 export class IndustryAveIndexController {
   constructor(private readonly service: IndustryAveIndexService) {}
 
