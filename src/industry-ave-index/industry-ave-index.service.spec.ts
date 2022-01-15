@@ -10,8 +10,8 @@ import { Props } from './type'
 
 describe('IndustryAveIndexService', () => {
   let service: IndustryAveIndexService
+  const industryID = 1
   const props: Props = {
-    industryID: 1,
     announcementDate: '2021/1/1',
     capitalAdequacyRatio: 1.0,
     roe: 1.0,
@@ -48,6 +48,7 @@ describe('IndustryAveIndexService', () => {
     // NOTE: リレーショナルな関係のIndustryのデータを生成しておく
     const parent_service = await module.get<IndustryService>(IndustryService)
     await parent_service.addIndustry({ name: 'test' })()
+    await parent_service.addIndustry({ name: 'another' })()
   })
 
   it('should be defined', () => {
@@ -56,36 +57,22 @@ describe('IndustryAveIndexService', () => {
 
   // for addIndex
   it('should not created with null param', async () => {
-    const result = await service.addIndex(null)()
+    const result = await service.addIndex(null, 1)()
     expect(E.isLeft(result)).toBe(true)
   })
 
   it('should not created with invalid industryID param', async () => {
-    const invalidProps: Props = {
-      industryID: 3,
-      announcementDate: '2021/1/1',
-      capitalAdequacyRatio: 1.0,
-      roe: 1.0,
-      roa: 1.0,
-      per: 1.0,
-      pbr: 1.0,
-      eps: 1.0,
-      pcfr: 1.0,
-      yieldGap: 1.0,
-      ebitda: 1.0,
-      ev: 1.0,
-      ev_ebitda: 1.0,
-    }
+    const invalidIndustryID = 3
 
-    const result = await service.addIndex(invalidProps)()
+    const result = await service.addIndex(props, invalidIndustryID)()
     expect(E.isLeft(result)).toBe(true)
   })
 
   it('should add index with correct param', async () => {
-    const result = await service.addIndex(props)()
+    const result = await service.addIndex(props, industryID)()
 
     // FIXME: ここで削除したくもないし、magic numberも使いたくもない
-    await service.deleteIndex(1)()
+    await service.deleteIndex(1, industryID)()
 
     expect(E.isRight(result)).toBe(true)
     expect(
@@ -98,18 +85,18 @@ describe('IndustryAveIndexService', () => {
   })
 
   it('should not add industry with same announcementDate param', async () => {
-    await service.addIndex(props)()
-    const secondIndex = await service.addIndex(props)()
+    await service.addIndex(props, industryID)()
+    const secondIndex = await service.addIndex(props, industryID)()
 
     // FIXME: ここで削除したくもないし、magic numberも使いたくもない
-    await service.deleteIndex(1)()
+    await service.deleteIndex(1, industryID)()
 
     expect(E.isLeft(secondIndex)).toBe(true)
   })
 
   // for getIndexList
   it('should get empty array with no data', async () => {
-    const result = await service.getIndexList()()
+    const result = await service.getIndexList(industryID)()
     expect(E.isRight(result)).toBe(true)
     expect(
       pipe(
@@ -120,11 +107,11 @@ describe('IndustryAveIndexService', () => {
   })
 
   it('should get correct index data', async () => {
-    const index = await service.addIndex(props)()
-    const result = await service.getIndexList()()
+    const index = await service.addIndex(props, industryID)()
+    const result = await service.getIndexList(industryID)()
 
     // FIXME: ここで削除したくもないし、magic numberも使いたくもない
-    await service.deleteIndex(1)()
+    await service.deleteIndex(1, industryID)()
 
     expect(E.isRight(result)).toBe(true)
     expect(
@@ -142,19 +129,46 @@ describe('IndustryAveIndexService', () => {
     )
   })
 
+  it('should get correct index data with same industryID', async () => {
+    await service.addIndex(props, industryID)()
+    await service.addIndex(props, industryID + 1)()
+    const result = await service.getIndexList(industryID)()
+
+    // FIXME: ここで削除したくもないし、magic numberも使いたくもない
+    await service.deleteIndex(1, industryID)()
+    await service.deleteIndex(2, industryID + 1)()
+
+    expect(E.isRight(result)).toBe(true)
+    expect(
+      pipe(
+        result,
+        E.map((result) => result.length),
+        E.getOrElse(() => -1),
+      ),
+    ).toEqual(1)
+  })
+
   // for deleteIndex
   it('should not deleted with no data', async () => {
-    const result = await service.deleteIndex(1)()
+    const result = await service.deleteIndex(1, industryID)()
     expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should not deleted with invalid industryID data', async () => {
+    await service.addIndex(props, industryID)()
+    const result = await service.deleteIndex(1, industryID + 1)()
+    expect(E.isLeft(result)).toBe(true)
+
+    await service.deleteIndex(1, industryID)()
   })
 
   it('should delete with correct data', async () => {
     const indexID = pipe(
-      await service.addIndex(props)(),
+      await service.addIndex(props, industryID)(),
       E.map((result) => result.id),
-      E.getOrElseW(() => -100),
+      E.getOrElse(() => -100),
     )
-    const result = await service.deleteIndex(indexID)()
+    const result = await service.deleteIndex(indexID, industryID)()
     expect(E.isRight(result)).toBe(true)
     expect(
       pipe(
@@ -166,20 +180,28 @@ describe('IndustryAveIndexService', () => {
 
   // for getIndex
   it('should not get data with no data', async () => {
-    const result = await service.getIndex(1)()
+    const result = await service.getIndex(1, industryID)()
     expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should not get data with invalid industryID', async () => {
+    await service.addIndex(props, industryID)
+    const result = await service.getIndex(1, industryID + 1)()
+    expect(E.isLeft(result)).toBe(true)
+
+    await service.deleteIndex(1, industryID)
   })
 
   it('should get correct data', async () => {
     const indexID = pipe(
-      await service.addIndex(props)(),
+      await service.addIndex(props, industryID)(),
       E.map((result) => result.id),
       E.getOrElseW(() => -100),
     )
-    const result = await service.getIndex(indexID)()
+    const result = await service.getIndex(indexID, industryID)()
 
     // FIXME: ここで削除したくもない
-    await service.deleteIndex(indexID)()
+    await service.deleteIndex(indexID, industryID)()
 
     expect(E.isRight(result)).toBe(true)
     expect(
@@ -193,13 +215,20 @@ describe('IndustryAveIndexService', () => {
 
   // for getCurrentIndex
   it('should not get current data with no data', async () => {
-    const result = await service.getCurrentIndex()()
+    const result = await service.getCurrentIndex(industryID)()
     expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should not get current data with invalid industryID', async () => {
+    await service.addIndex(props, industryID)
+    const result = await service.getCurrentIndex(industryID + 1)()
+    expect(E.isLeft(result)).toBe(true)
+
+    await service.deleteIndex(1, industryID)
   })
 
   it('should get correct current data', async () => {
     const oldProps: Props = {
-      industryID: 1,
       announcementDate: '2000/1/1',
       capitalAdequacyRatio: 1.0,
       roe: 1.0,
@@ -214,19 +243,19 @@ describe('IndustryAveIndexService', () => {
       ev_ebitda: 1.0,
     }
 
-    const payload = await service.addIndex(props)()
-    await service.addIndex(oldProps)()
+    const payload = await service.addIndex(props, industryID)()
+    await service.addIndex(oldProps, industryID)()
     const indexID = pipe(
       payload,
       E.map((result) => result.id),
       E.getOrElseW(() => 'this test will fail'),
     )
 
-    const result = await service.getCurrentIndex()()
+    const result = await service.getCurrentIndex(industryID)()
 
     // FIXME: ここで削除したくもない
-    await service.deleteIndex(1)()
-    await service.deleteIndex(2)()
+    await service.deleteIndex(1, industryID)()
+    await service.deleteIndex(2, industryID)()
 
     expect(E.isRight(result)).toBe(true)
     expect(
