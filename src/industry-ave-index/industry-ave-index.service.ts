@@ -174,6 +174,26 @@ export class IndustryAveIndexService {
     )
   }
 
+  getCurrentIndex(): TE.TaskEither<HttpException, IndustryAveIndex> {
+    return pipe(
+      TE.Do,
+      TE.bind('indexList', () => this.getIndexList()),
+      TE.map(({ indexList }) =>
+        // NOTE: 一番announcementDateが最近のものを先頭にする
+        indexList.sort(
+          (a, b) => b.announcementDate.getTime() - a.announcementDate.getTime(),
+        ),
+      ),
+      TE.map((sortedList) => sortedList.shift()),
+      TE.map((maybeCurrentIndex) =>
+        TE.fromOptionK(
+          () => new NotFoundException(`industryAveIndex is not found`),
+        )(() => O.fromNullable(maybeCurrentIndex))(),
+      ),
+      TE.flatten,
+    )
+  }
+
   deleteIndex(id: number): TE.TaskEither<HttpException, number> {
     return pipe(
       this.getIndex(id),
