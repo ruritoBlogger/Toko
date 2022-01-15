@@ -1,7 +1,6 @@
 import * as t from 'io-ts'
 
 export const PropsCodec = t.type({
-  industryID: t.number,
   announcementDate: t.string,
   capitalAdequacyRatio: t.number,
   roe: t.number,

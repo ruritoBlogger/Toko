@@ -43,12 +43,13 @@ export class IndustryAveIndexService {
     )
   }
 
-  addIndex(props: Props): TE.TaskEither<HttpException, IndustryAveIndex> {
+  addIndex(
+    props: Props,
+    industryID: number,
+  ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.map(() =>
-        this.findSameIndex(props.announcementDate, props.industryID),
-      ),
+      TE.map(() => this.findSameIndex(props.announcementDate, industryID)),
       TE.map((isIndexExist) =>
         pipe(
           isIndexExist
@@ -66,11 +67,14 @@ export class IndustryAveIndexService {
       TE.bind('payload', () =>
         pipe(
           TE.tryCatch(
-            () => this.industryAveIndexRepository.insert(props),
+            () =>
+              this.industryAveIndexRepository.insert(
+                Object.assign(props, { industryID: industryID }),
+              ),
             // NOTE: insertに失敗 ≒ industryIDが存在しない
             () =>
               new NotFoundException(
-                `DB access failed with insert IndustryAveIndex with industryID: ${props.industryID}`,
+                `DB access failed with insert IndustryAveIndex with industryID: ${industryID}`,
               ),
           ),
         ),
@@ -98,13 +102,12 @@ export class IndustryAveIndexService {
 
   updateIndex(
     id: number,
+    industryID: number,
     props: Props,
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       validateProps(props, PropsCodec),
-      TE.map(() =>
-        this.findSameIndex(props.announcementDate, props.industryID),
-      ),
+      TE.map(() => this.findSameIndex(props.announcementDate, industryID)),
       TE.map((isSameIndexExist) =>
         pipe(
           isSameIndexExist
@@ -118,18 +121,19 @@ export class IndustryAveIndexService {
         ),
       ),
       // mapが流れてくる === 名前の重複が無い
-      TE.bind('updateTarget', () => this.getIndex(id)),
+      TE.bind('updateTarget', () => this.getIndex(id, industryID)),
       TE.map(({ updateTarget }) =>
         TE.tryCatch(
           () =>
             this.industryAveIndexRepository.save({
               ...props,
+              industryID: industryID,
               id: updateTarget.id,
             }),
           // NOTE: insertに失敗 ≒ industryIDが存在しない
           () =>
             new NotFoundException(
-              `DB access failed with save IndustryAveIndex with industryID: ${props.industryID}`,
+              `DB access failed with save IndustryAveIndex with industryID: ${industryID}`,
             ),
         ),
       ),
@@ -137,14 +141,22 @@ export class IndustryAveIndexService {
     )
   }
 
-  getIndexList(): TE.TaskEither<HttpException, IndustryAveIndex[]> {
+  getIndexList(
+    industryID: number,
+  ): TE.TaskEither<HttpException, IndustryAveIndex[]> {
     return TE.tryCatch(
-      () => this.industryAveIndexRepository.find(),
+      () =>
+        this.industryAveIndexRepository.find({
+          where: { industryID: industryID },
+        }),
       () => new InternalServerErrorException(`DB access failed with find`),
     )
   }
 
-  getIndex(id: number): TE.TaskEither<HttpException, IndustryAveIndex> {
+  getIndex(
+    id: number,
+    industryID: number,
+  ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       TE.Do,
       TE.bind('payload', () =>
@@ -153,6 +165,7 @@ export class IndustryAveIndexService {
             this.industryAveIndexRepository.findOne({
               where: {
                 id: id,
+                industryID: industryID,
               },
             }),
           () =>
@@ -174,10 +187,12 @@ export class IndustryAveIndexService {
     )
   }
 
-  getCurrentIndex(): TE.TaskEither<HttpException, IndustryAveIndex> {
+  getCurrentIndex(
+    industryID: number,
+  ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       TE.Do,
-      TE.bind('indexList', () => this.getIndexList()),
+      TE.bind('indexList', () => this.getIndexList(industryID)),
       TE.map(({ indexList }) =>
         // NOTE: 一番announcementDateが最近のものを先頭にする
         indexList.sort(
@@ -187,16 +202,22 @@ export class IndustryAveIndexService {
       TE.map((sortedList) => sortedList.shift()),
       TE.map((maybeCurrentIndex) =>
         TE.fromOptionK(
-          () => new NotFoundException(`industryAveIndex is not found`),
+          () =>
+            new NotFoundException(
+              `industryAveIndex industryID: ${industryID} is not found`,
+            ),
         )(() => O.fromNullable(maybeCurrentIndex))(),
       ),
       TE.flatten,
     )
   }
 
-  deleteIndex(id: number): TE.TaskEither<HttpException, number> {
+  deleteIndex(
+    id: number,
+    industryID: number,
+  ): TE.TaskEither<HttpException, number> {
     return pipe(
-      this.getIndex(id),
+      this.getIndex(id, industryID),
       // FIXME: bindする必要は無いが、mapだと削除されない
       TE.bind('result', (targetIndex) =>
         TE.tryCatch(
