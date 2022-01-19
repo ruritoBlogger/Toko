@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
+import { CompanyController } from './company/company.controller'
+import { CompanyModule } from './company/company.module'
+import { CompanyService } from './company/company.service'
 import { Industry, IndustryAveIndex } from './entities'
 import { IndustryModule } from './industry/industry.module'
 import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.module'
@@ -19,6 +22,9 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
     }),
     IndustryModule,
     IndustryAveIndexModule,
+    CompanyModule,
   ],
+  providers: [CompanyService],
+  controllers: [CompanyController],
 })
 export class AppModule {}
