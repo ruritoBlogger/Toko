@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
+import { Company } from './company.entity'
 import { IndustryAveIndex } from './industry-ave-index.entity'
 
 @Entity()
@@ -28,4 +29,7 @@ export class Industry {
     (industryAveIndex) => industryAveIndex.industry,
   )
   industryAveIndex: IndustryAveIndex
+
+  @OneToMany(() => Company, (company) => company.industry)
+  company: Company
 }
