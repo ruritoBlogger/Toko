@@ -6,13 +6,12 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { flow, pipe } from 'fp-ts/function'
+import { pipe } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
-import { NotFoundError } from 'rxjs'
-import { selectIdentifyNumberFromInsert, validateProps } from 'src/utils'
-import { In, Repository } from 'typeorm'
+import { Repository } from 'typeorm'
 
+import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
 import { Company } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
