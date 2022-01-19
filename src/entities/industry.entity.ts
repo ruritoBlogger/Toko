@@ -7,8 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-import { Company } from './company.entity'
-import { IndustryAveIndex } from './industry-ave-index.entity'
+import { Company, IndustryAveIndex } from '.'
 
 @Entity()
 export class Industry {

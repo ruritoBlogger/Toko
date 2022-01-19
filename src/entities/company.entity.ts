@@ -4,11 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 
-import { Industry } from './industry.entity'
+import { FinantialStatements, Industry } from '.'
 
 @Entity()
 export class Company {
@@ -21,6 +22,12 @@ export class Company {
   @ManyToOne(() => Industry, (industry) => industry.company)
   @JoinColumn([{ name: 'industryID', referencedColumnName: 'id' }])
   industry: Industry
+
+  @OneToMany(
+    () => FinantialStatements,
+    (finantialStatements) => finantialStatements.company,
+  )
+  finantialStatements: FinantialStatements
 
   @Column({ length: 60, unique: true })
   name: string
