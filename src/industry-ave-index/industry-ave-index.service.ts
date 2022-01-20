@@ -154,15 +154,16 @@ export class IndustryAveIndexService {
     industryID: number,
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
-      TE.Do,
-      TE.chain(() => this.getIndexList(industryID)),
+      this.getIndexList(industryID),
       TE.map((indexList) =>
         // NOTE: 一番announcementDateが最近のものを先頭にする
-        indexList.sort(
-          (a, b) => b.announcementDate.getTime() - a.announcementDate.getTime(),
-        ),
+        indexList
+          .sort(
+            (a, b) =>
+              b.announcementDate.getTime() - a.announcementDate.getTime(),
+          )
+          .shift(),
       ),
-      TE.map((sortedList) => sortedList.shift()),
       TE.chainOptionK(
         () =>
           new NotFoundException(
