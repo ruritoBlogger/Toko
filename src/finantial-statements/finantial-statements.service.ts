@@ -148,6 +148,29 @@ export class FinantialStatementsService {
     )
   }
 
+  getCurrentStatements(
+    companyID: number,
+  ): TE.TaskEither<HttpException, FinantialStatements> {
+    return pipe(
+      this.getStatementsList(companyID),
+      TE.map((statementsList) =>
+        // NOTE: 一番announcementDateが最近のものを先頭にする
+        statementsList
+          .sort(
+            (a, b) =>
+              b.announcementDate.getTime() - a.announcementDate.getTime(),
+          )
+          .shift(),
+      ),
+      TE.chainOptionK(
+        () =>
+          new NotFoundException(
+            `FinantialStatements companyID: ${companyID}  is not found`,
+          ),
+      )((maybeStatements) => O.fromNullable(maybeStatements)),
+    )
+  }
+
   deleteStatements(
     id: number,
     companyID: number,
