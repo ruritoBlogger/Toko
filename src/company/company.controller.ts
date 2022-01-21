@@ -28,7 +28,7 @@ export class CompanyController {
     @Body() body: { props: Props; id: number },
   ): Promise<Company> {
     return await this.service
-      .updateCompany(body.id, body.props)()
+      .updateCompany(body.props, body.id)()
       .then((result) => returnWithThrowHttpException(result))
   }
 

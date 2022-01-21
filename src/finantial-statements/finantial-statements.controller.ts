@@ -24,7 +24,7 @@ export class FinantialStatementsController {
     @Param() param: { companyID: number },
   ): Promise<FinantialStatements> {
     return await this.service
-      .addStatements(param.companyID, body.props)()
+      .addStatements(body.props, param.companyID)()
       .then((result) => returnWithThrowHttpException(result))
   }
 
@@ -34,7 +34,7 @@ export class FinantialStatementsController {
     @Param() param: { companyID: number },
   ): Promise<FinantialStatements> {
     return await this.service
-      .updateStatements(body.id, param.companyID, body.props)()
+      .updateStatements(body.props, body.id, param.companyID)()
       .then((result) => returnWithThrowHttpException(result))
   }
 

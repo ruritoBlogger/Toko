@@ -28,7 +28,7 @@ export class IndustryController {
     @Body() body: { id: number; props: Props },
   ): Promise<Industry> {
     return await this.service
-      .updateIndustry(body.id, body.props)()
+      .updateIndustry(body.props, body.id)()
       .then((result) => returnWithThrowHttpException(result))
   }
 
