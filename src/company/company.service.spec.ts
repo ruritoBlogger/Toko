@@ -113,6 +113,89 @@ describe('CompanyService', () => {
     expect(E.isLeft(secondIndex)).toBe(true)
   })
 
+  // for updateCompany
+  it('should not updated with null param', async () => {
+    const id = pipe(
+      await service.addCompany(props)(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const result = await service.updateCompany(null, id)()
+
+    await service.deleteCompany(id)()
+
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should not updated with same name param', async () => {
+    await service.addCompany(props)()
+    const id = pipe(
+      await service.addCompany({
+        name: 'another',
+        identificationCode: 9999,
+        industryID: props.industryID,
+      })(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const result = await service.updateCompany(
+      { ...props, identificationCode: 8888 },
+      id,
+    )()
+
+    await service.deleteCompany(1)()
+    await service.deleteCompany(id)()
+
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should not updated with same identificationCode param', async () => {
+    await service.addCompany(props)()
+    const id = pipe(
+      await service.addCompany({
+        name: 'another',
+        identificationCode: 9999,
+        industryID: props.industryID,
+      })(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const result = await service.updateCompany(
+      { ...props, name: 'another_another' },
+      id,
+    )()
+
+    await service.deleteCompany(1)()
+    await service.deleteCompany(id)()
+
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should updated with correct param', async () => {
+    const id = pipe(
+      await service.addCompany(props)(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const anotherProps: Props = {
+      name: 'another ',
+      identificationCode: 9999,
+      industryID: props.industryID,
+    }
+    const result = await service.updateCompany(anotherProps, id)()
+
+    await service.deleteCompany(id)()
+
+    expect(E.isRight(result)).toBe(true)
+    expect(
+      pipe(
+        result,
+        E.map((industry) => industry.name),
+        E.getOrElseW(() => 'this test will fail'),
+      ),
+    ).toBe(anotherProps.name)
+  })
+
   // for getCompanyList
   it('should get empty array with no data', async () => {
     const result = await service.getCompanyList()()
