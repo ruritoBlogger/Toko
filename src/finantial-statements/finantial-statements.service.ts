@@ -59,10 +59,13 @@ export class FinantialStatementsService {
       TE.chain(() => this.rejectSameStatements(props, companyID)),
       TE.chain((correctProps) =>
         TE.tryCatch(
-          () => this.finantialStatementsRepository.insert(correctProps),
+          () =>
+            this.finantialStatementsRepository.insert(
+              Object.assign(correctProps, { companyID: companyID }),
+            ),
           () =>
             new NotFoundException(
-              `DB access afailed with insert FinantialStatements ${correctProps}`,
+              `DB access failed with insert FinantialStatements ${correctProps}`,
             ),
         ),
       ),
