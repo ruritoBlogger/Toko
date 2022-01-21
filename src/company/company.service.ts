@@ -102,8 +102,8 @@ export class CompanyService {
   }
 
   updateCompany(
-    id: number,
     props: Props,
+    id: number,
   ): TE.TaskEither<HttpException, Company> {
     return pipe(
       validateProps(props, PropsCodec),

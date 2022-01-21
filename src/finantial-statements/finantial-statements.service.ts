@@ -51,8 +51,8 @@ export class FinantialStatementsService {
   }
 
   addStatements(
-    companyID: number,
     props: Props,
+    companyID: number,
   ): TE.TaskEither<HttpException, FinantialStatements> {
     return pipe(
       validateProps(props, PropsCodec),
@@ -86,9 +86,9 @@ export class FinantialStatementsService {
   }
 
   updateStatements(
+    props: Props,
     id: number,
     companyID: number,
-    props: Props,
   ): TE.TaskEither<HttpException, FinantialStatements> {
     return pipe(
       validateProps(props, PropsCodec),

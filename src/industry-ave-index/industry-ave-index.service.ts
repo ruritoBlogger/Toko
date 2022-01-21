@@ -88,9 +88,9 @@ export class IndustryAveIndexService {
   }
 
   updateIndex(
+    props: Props,
     id: number,
     industryID: number,
-    props: Props,
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
       validateProps(props, PropsCodec),

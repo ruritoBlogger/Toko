@@ -37,7 +37,7 @@ export class IndustryAveIndexController {
     @Param() param: { industryID: number },
   ): Promise<IndustryAveIndex> {
     return await this.service
-      .updateIndex(body.id, param.industryID, body.props)()
+      .updateIndex(body.props, body.id, param.industryID)()
       .then((result) => returnWithThrowHttpException(result))
   }
 

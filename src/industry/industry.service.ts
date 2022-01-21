@@ -76,8 +76,8 @@ export class IndustryService {
   }
 
   updateIndustry(
-    id: number,
     props: Props,
+    id: number,
   ): TE.TaskEither<HttpException, Industry> {
     return pipe(
       validateProps(props, PropsCodec),
