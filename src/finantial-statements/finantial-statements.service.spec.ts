@@ -109,6 +109,63 @@ describe('FinantialStatementsService', () => {
     expect(E.isLeft(secondStatements)).toBe(true)
   })
 
+  // for updateStatements
+  it('should not updated with null param', async () => {
+    const id = pipe(
+      await service.addStatements(props, companyID)(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const result = await service.updateStatements(null, id, companyID)()
+
+    await service.deleteStatements(id, companyID)()
+
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should not updated with same announcementDate param', async () => {
+    await service.addStatements(props, companyID)()
+    const id = pipe(
+      await service.addStatements(
+        { ...props, announcementDate: '2017/1/1' },
+        companyID,
+      )(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const result = await service.updateStatements(props, id, companyID)()
+
+    await service.deleteStatements(1, companyID)()
+    await service.deleteStatements(id, companyID)()
+
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should updated with correct param', async () => {
+    const id = pipe(
+      await service.addStatements(props, companyID)(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const anotherDate = '2016/1/1'
+    const result = await service.updateStatements(
+      { ...props, announcementDate: anotherDate, isFiscal: false },
+      id,
+      companyID,
+    )()
+
+    await service.deleteStatements(id, companyID)()
+
+    expect(E.isRight(result)).toBe(true)
+    expect(
+      pipe(
+        result,
+        E.map((industry) => industry.announcementDate),
+        E.getOrElseW(() => 'this test will fail'),
+      ),
+    ).toBe(anotherDate)
+  })
+
   // for getStatementsList
   it('should get empty array with no data', async () => {
     const result = await service.getStatementsList(companyID)()
