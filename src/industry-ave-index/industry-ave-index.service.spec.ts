@@ -104,6 +104,73 @@ describe('IndustryAveIndexService', () => {
     expect(E.isLeft(secondIndex)).toBe(true)
   })
 
+  // for updateIndex
+  it('should not updated with null param', async () => {
+    const id = pipe(
+      await service.addIndex(props, industryID)(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const result = await service.updateIndex(null, id, industryID)()
+
+    await service.deleteIndex(id, industryID)()
+
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should not updated with same announcementDate param', async () => {
+    await service.addIndex(props, industryID)()
+    const id = pipe(
+      await service.addIndex(props, industryID)(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const result = await service.updateIndex(props, id, industryID)()
+
+    await service.deleteIndex(1, industryID)()
+    await service.deleteIndex(id, industryID)()
+
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should not updated with invalid industryID param', async () => {
+    const id = pipe(
+      await service.addIndex(props, industryID)(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const result = await service.updateIndex(props, id, industryID + 1)()
+
+    await service.deleteIndex(id, industryID)()
+
+    expect(E.isLeft(result)).toBe(true)
+  })
+
+  it('should updated with correct param', async () => {
+    const id = pipe(
+      await service.addIndex(props, industryID)(),
+      E.map((result) => result.id),
+      E.getOrElseW(() => -100),
+    )
+    const anotherDate = '2018/1/1'
+    const result = await service.updateIndex(
+      { ...props, announcementDate: anotherDate },
+      id,
+      industryID,
+    )()
+
+    await service.deleteIndex(id, industryID)()
+
+    expect(E.isRight(result)).toBe(true)
+    expect(
+      pipe(
+        result,
+        E.map((index) => index.announcementDate),
+        E.getOrElseW(() => 'this test will fail'),
+      ),
+    ).toBe(anotherDate)
+  })
+
   // for getIndexList
   it('should get empty array with no data', async () => {
     const result = await service.getIndexList(industryID)()
