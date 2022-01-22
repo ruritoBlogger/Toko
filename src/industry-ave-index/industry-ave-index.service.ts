@@ -164,6 +164,7 @@ export class IndustryAveIndexService {
           )
           .shift(),
       ),
+      // NOTE: maybeCurrentIndexはIndustryAveIndexではなくOption<IndustryAveIndex>
       TE.chainOptionK(
         () =>
           new NotFoundException(

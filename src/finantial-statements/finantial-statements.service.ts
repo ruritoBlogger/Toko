@@ -165,6 +165,7 @@ export class FinantialStatementsService {
           )
           .shift(),
       ),
+      // NOTE: maybeStatementsはFinantialStatements型ではなくO.Option<FinantialStatements>型
       TE.chainOptionK(
         () =>
           new NotFoundException(

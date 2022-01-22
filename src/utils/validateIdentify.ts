@@ -30,10 +30,7 @@ export function selectIdentifyNumberFromInsert(
   insertResult: InsertResult,
 ): TE.TaskEither<HttpException, number> {
   return pipe(
-    TE.Do,
-    TE.bind('ids', () =>
-      decodeWith(t.array(IdentifyCodec))(insertResult.identifiers),
-    ),
-    TE.map(({ ids }) => ids.shift().id),
+    decodeWith(t.array(IdentifyCodec))(insertResult.identifiers),
+    TE.map((ids) => ids.shift().id),
   )
 }

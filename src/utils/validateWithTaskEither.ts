@@ -10,7 +10,6 @@ export function validateProps<T>(
 ): TE.TaskEither<HttpException, T> {
   return pipe(
     codec.decode(props),
-    E.map((result) => E.right(result)),
     E.getOrElseW(() =>
       E.left(
         new BadRequestException(
