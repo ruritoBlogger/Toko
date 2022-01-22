@@ -31,7 +31,7 @@ export class IncomeStatementService {
       TE.tryCatch(
         () =>
           this.incomeStatementRepository.findOne({
-            where: { finantialID },
+            where: { finantialID: finantialID },
           }),
         () =>
           new InternalServerErrorException(
