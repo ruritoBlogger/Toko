@@ -4,11 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 
-import { Company } from '.'
+import { Company, IncomeStatement } from '.'
 
 @Entity()
 export class FinantialStatements {
@@ -21,6 +22,12 @@ export class FinantialStatements {
   @ManyToOne(() => Company, (company) => company.finantialStatements)
   @JoinColumn([{ name: 'companyID', referencedColumnName: 'id' }])
   company: Company
+
+  @OneToMany(
+    () => IncomeStatement,
+    (incomeStatement) => incomeStatement.finantialStatements,
+  )
+  incomeStatement: IncomeStatement
 
   @Column({ unique: true })
   announcementDate: Date

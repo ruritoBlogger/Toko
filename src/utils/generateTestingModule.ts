@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import {
   Company,
   FinantialStatements,
+  IncomeStatement,
   Industry,
   IndustryAveIndex,
 } from '../entities'
@@ -18,7 +19,13 @@ export const generateTestingModule = async (
         // FIXME: 本当はmysqlでやりたい
         type: 'sqlite',
         database: ':memory:',
-        entities: [Industry, IndustryAveIndex, Company, FinantialStatements],
+        entities: [
+          Industry,
+          IndustryAveIndex,
+          Company,
+          FinantialStatements,
+          IncomeStatement,
+        ],
         synchronize: true,
         keepConnectionAlive: true,
       }),
@@ -27,6 +34,7 @@ export const generateTestingModule = async (
         IndustryAveIndex,
         Company,
         FinantialStatements,
+        IncomeStatement,
       ]),
     ],
     providers: services,
