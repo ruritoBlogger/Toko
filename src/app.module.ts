@@ -9,6 +9,7 @@ import {
   IndustryAveIndex,
 } from './entities'
 import { FinantialStatementsModule } from './finantial-statements/finantial-statements.module'
+import { IncomeStatementModule } from './income-statement/income-statement.module'
 import { IndustryModule } from './industry/industry.module'
 import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.module'
 
@@ -28,6 +29,7 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
     IndustryAveIndexModule,
     CompanyModule,
     FinantialStatementsModule,
+    IncomeStatementModule,
   ],
 })
 export class AppModule {}
