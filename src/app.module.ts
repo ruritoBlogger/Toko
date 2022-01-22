@@ -5,6 +5,7 @@ import { CompanyModule } from './company/company.module'
 import {
   Company,
   FinantialStatements,
+  IncomeStatement,
   Industry,
   IndustryAveIndex,
 } from './entities'
@@ -22,7 +23,13 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
       username: 'root',
       password: 'password',
       database: 'nestday7',
-      entities: [Industry, IndustryAveIndex, Company, FinantialStatements],
+      entities: [
+        Industry,
+        IndustryAveIndex,
+        Company,
+        FinantialStatements,
+        IncomeStatement,
+      ],
       synchronize: true,
     }),
     IndustryModule,

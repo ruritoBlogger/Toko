@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import {
   Company,
   FinantialStatements,
+  IncomeStatement,
   Industry,
   IndustryAveIndex,
 } from './../entities'
@@ -18,6 +19,7 @@ import { IndustryService } from './industry.service'
       IndustryAveIndex,
       Company,
       FinantialStatements,
+      IncomeStatement,
     ]),
   ],
   providers: [IndustryService],
