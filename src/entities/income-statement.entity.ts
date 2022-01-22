@@ -16,13 +16,13 @@ export class IncomeStatement {
   readonly id: number
 
   @Column()
-  finantialStatementsID: number
+  finantialID: number
 
   @ManyToOne(
     () => FinantialStatements,
     (finantialStatements) => finantialStatements.incomeStatement,
   )
-  @JoinColumn([{ name: 'finantialStatementsID', referencedColumnName: 'id' }])
+  @JoinColumn([{ name: 'finantialID', referencedColumnName: 'id' }])
   finantialStatements: FinantialStatements
 
   @Column({ type: 'double' })
