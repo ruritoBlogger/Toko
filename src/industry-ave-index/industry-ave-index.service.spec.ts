@@ -1,15 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { TypeOrmModule } from '@nestjs/typeorm'
+import { TestingModule } from '@nestjs/testing'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 
-import {
-  Company,
-  FinantialStatements,
-  Industry,
-  IndustryAveIndex,
-} from '../entities'
 import { IndustryService } from '../industry/industry.service'
+import { generateTestingModule } from '../utils'
 import { IndustryAveIndexService } from './industry-ave-index.service'
 import { Props } from './type'
 
@@ -32,25 +26,10 @@ describe('IndustryAveIndexService', () => {
   }
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          // FIXME: 本当はmysqlでやりたい
-          type: 'sqlite',
-          database: ':memory:',
-          entities: [Industry, IndustryAveIndex, Company, FinantialStatements],
-          synchronize: true,
-          keepConnectionAlive: true,
-        }),
-        TypeOrmModule.forFeature([
-          Industry,
-          IndustryAveIndex,
-          Company,
-          FinantialStatements,
-        ]),
-      ],
-      providers: [IndustryAveIndexService, IndustryService],
-    }).compile()
+    const module: TestingModule = await generateTestingModule(
+      IndustryAveIndexService,
+      IndustryService,
+    )
 
     await module.init()
     service = await module.get<IndustryAveIndexService>(IndustryAveIndexService)
