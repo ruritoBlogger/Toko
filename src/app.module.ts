@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
+import { BalanceSheetModule } from './balance-sheet/balance-sheet.module'
 import { CashflowModule } from './cashflow/cashflow.module'
 import { CompanyModule } from './company/company.module'
 import {
@@ -41,6 +42,7 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
     FinantialStatementsModule,
     IncomeStatementModule,
     CashflowModule,
+    BalanceSheetModule,
   ],
 })
 export class AppModule {}
