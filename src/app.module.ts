@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { CashflowModule } from './cashflow/cashflow.module'
 import { CompanyModule } from './company/company.module'
 import {
+  Cashflow,
   Company,
   FinantialStatements,
   IncomeStatement,
@@ -30,6 +31,7 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
         Company,
         FinantialStatements,
         IncomeStatement,
+        Cashflow,
       ],
       synchronize: true,
     }),
