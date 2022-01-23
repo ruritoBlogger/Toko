@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import {
+  Cashflow,
   Company,
   FinantialStatements,
   IncomeStatement,
@@ -25,6 +26,7 @@ export const generateTestingModule = async (
           Company,
           FinantialStatements,
           IncomeStatement,
+          Cashflow,
         ],
         synchronize: true,
         keepConnectionAlive: true,
@@ -35,6 +37,7 @@ export const generateTestingModule = async (
         Company,
         FinantialStatements,
         IncomeStatement,
+        Cashflow,
       ]),
     ],
     providers: services,
