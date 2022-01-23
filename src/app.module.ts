@@ -15,6 +15,7 @@ import {
 } from './entities'
 import { FinantialStatementsModule } from './finantial-statements/finantial-statements.module'
 import { IncomeStatementModule } from './income-statement/income-statement.module'
+import { IndexModule } from './index/index.module'
 import { IndustryModule } from './industry/industry.module'
 import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.module'
 
@@ -45,6 +46,7 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
     IncomeStatementModule,
     CashflowModule,
     BalanceSheetModule,
+    IndexModule,
   ],
 })
 export class AppModule {}
