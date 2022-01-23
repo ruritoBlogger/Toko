@@ -26,16 +26,16 @@ export class Cashflow {
   finantialStatements: FinantialStatements
 
   @Column({ type: 'double' })
-  totalSales: number
+  salesCF: number
 
   @Column({ type: 'double' })
-  operatingIncome: number
+  investmentCF: number
 
   @Column({ type: 'double' })
-  ordinaryIncome: number
+  financialCF: number
 
   @Column({ type: 'double' })
-  netIncome: number
+  cashEquivalent: number
 
   @CreateDateColumn()
   readonly createdAt: Date
