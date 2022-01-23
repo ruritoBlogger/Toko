@@ -1,14 +1,24 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { Cashflow, FinantialStatements, IncomeStatement } from '../entities'
+import {
+  BalanceSheet,
+  Cashflow,
+  FinantialStatements,
+  IncomeStatement,
+} from '../entities'
 import { CashflowController } from './cashflow.controller'
 import { CashflowService } from './cashflow.service'
 
 @Module({
   controllers: [CashflowController],
   imports: [
-    TypeOrmModule.forFeature([IncomeStatement, FinantialStatements, Cashflow]),
+    TypeOrmModule.forFeature([
+      IncomeStatement,
+      FinantialStatements,
+      Cashflow,
+      BalanceSheet,
+    ]),
   ],
   providers: [CashflowService],
 })
