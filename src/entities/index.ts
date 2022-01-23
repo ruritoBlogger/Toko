@@ -1,3 +1,4 @@
+export { BalanceSheet } from './balance-sheet.entity'
 export { Cashflow } from './cashflow.entity'
 export { Company } from './company.entity'
 export { FinantialStatements } from './finantial-statements.entity'

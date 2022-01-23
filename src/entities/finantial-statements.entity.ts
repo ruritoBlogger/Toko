@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-import { Cashflow, Company, IncomeStatement } from '.'
+import { BalanceSheet, Cashflow, Company, IncomeStatement } from '.'
 
 @Entity()
 export class FinantialStatements {
@@ -31,6 +31,12 @@ export class FinantialStatements {
 
   @OneToMany(() => Cashflow, (cashflow) => cashflow.finantialStatements)
   cashflow: Cashflow
+
+  @OneToMany(
+    () => BalanceSheet,
+    (balanceSheet) => balanceSheet.finantialStatements,
+  )
+  balanceSheet: BalanceSheet
 
   @Column({ unique: true })
   announcementDate: Date

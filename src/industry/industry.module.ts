@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import {
+  BalanceSheet,
   Cashflow,
   Company,
   FinantialStatements,
@@ -22,6 +23,7 @@ import { IndustryService } from './industry.service'
       FinantialStatements,
       IncomeStatement,
       Cashflow,
+      BalanceSheet,
     ]),
   ],
   providers: [IndustryService],

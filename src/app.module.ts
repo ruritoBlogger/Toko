@@ -5,6 +5,7 @@ import { BalanceSheetModule } from './balance-sheet/balance-sheet.module'
 import { CashflowModule } from './cashflow/cashflow.module'
 import { CompanyModule } from './company/company.module'
 import {
+  BalanceSheet,
   Cashflow,
   Company,
   FinantialStatements,
@@ -33,6 +34,7 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
         FinantialStatements,
         IncomeStatement,
         Cashflow,
+        BalanceSheet,
       ],
       synchronize: true,
     }),
