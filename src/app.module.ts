@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
+import { CashflowModule } from './cashflow/cashflow.module'
 import { CompanyModule } from './company/company.module'
 import {
   Company,
@@ -37,6 +38,7 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
     CompanyModule,
     FinantialStatementsModule,
     IncomeStatementModule,
+    CashflowModule,
   ],
 })
 export class AppModule {}
