@@ -8,6 +8,7 @@ import {
   Company,
   FinantialStatements,
   IncomeStatement,
+  Index,
   Industry,
   IndustryAveIndex,
 } from '../entities'
@@ -29,6 +30,7 @@ export const generateTestingModule = async (
           IncomeStatement,
           Cashflow,
           BalanceSheet,
+          Index,
         ],
         synchronize: true,
         keepConnectionAlive: true,
@@ -41,6 +43,7 @@ export const generateTestingModule = async (
         IncomeStatement,
         Cashflow,
         BalanceSheet,
+        Index,
       ]),
     ],
     providers: services,

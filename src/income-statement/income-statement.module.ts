@@ -6,6 +6,7 @@ import {
   Cashflow,
   FinantialStatements,
   IncomeStatement,
+  Index,
 } from '../entities'
 import { IncomeStatementController } from './income-statement.controller'
 import { IncomeStatementService } from './income-statement.service'
@@ -18,6 +19,7 @@ import { IncomeStatementService } from './income-statement.service'
       FinantialStatements,
       Cashflow,
       BalanceSheet,
+      Index,
     ]),
   ],
   providers: [IncomeStatementService],

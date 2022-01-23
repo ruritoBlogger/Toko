@@ -7,6 +7,7 @@ import {
   Company,
   FinantialStatements,
   IncomeStatement,
+  Index,
   Industry,
   IndustryAveIndex,
 } from './../entities'
@@ -24,6 +25,7 @@ import { IndustryService } from './industry.service'
       IncomeStatement,
       Cashflow,
       BalanceSheet,
+      Index,
     ]),
   ],
   providers: [IndustryService],

@@ -10,6 +10,7 @@ import {
   Company,
   FinantialStatements,
   IncomeStatement,
+  Index,
   Industry,
   IndustryAveIndex,
 } from './entities'
@@ -36,6 +37,7 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
         IncomeStatement,
         Cashflow,
         BalanceSheet,
+        Index,
       ],
       synchronize: true,
     }),

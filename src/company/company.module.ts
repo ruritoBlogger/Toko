@@ -5,6 +5,7 @@ import {
   BalanceSheet,
   Company,
   FinantialStatements,
+  Index,
   Industry,
 } from './../entities'
 import { CompanyController } from './company.controller'
@@ -17,6 +18,7 @@ import { CompanyService } from './company.service'
       Company,
       Industry,
       FinantialStatements,
+      Index,
       BalanceSheet,
     ]),
   ],
