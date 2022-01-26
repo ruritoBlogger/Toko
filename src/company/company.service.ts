@@ -74,7 +74,7 @@ export class CompanyService {
 
   addCompany(props: Props): TE.TaskEither<HttpException, Company> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'Company', PropsCodec),
       TE.chain(() => this.rejectSameCompany(props)),
       TE.chain((correctProps) =>
         TE.tryCatch(
@@ -106,7 +106,7 @@ export class CompanyService {
     id: number,
   ): TE.TaskEither<HttpException, Company> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'Company', PropsCodec),
       TE.chain(() => this.rejectSameCompany(props)),
       TE.chain(() => this.getCompany(id)),
       TE.chain((updateTarget) =>

@@ -18,6 +18,7 @@ export class CompanyController {
 
   @Post()
   async addCompany(@Body() body: { props: Props }): Promise<Company> {
+    console.log(body)
     return await this.service
       .addCompany(body.props)()
       .then((result) => returnWithThrowHttpException(result))
@@ -32,7 +33,7 @@ export class CompanyController {
       .then((result) => returnWithThrowHttpException(result))
   }
 
-  @Get(';id')
+  @Get(':id')
   async getCompany(@Param() param: { id: number }): Promise<Company> {
     return await this.service
       .getCompany(param.id)()

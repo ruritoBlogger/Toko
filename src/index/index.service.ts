@@ -52,7 +52,7 @@ export class IndexService {
     finantialID: number,
   ): TE.TaskEither<HttpException, Index> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'Index', PropsCodec),
       TE.chain(() => this.rejectSameIndex(props, finantialID)),
       TE.chain((correctProps) =>
         TE.tryCatch(
@@ -88,7 +88,7 @@ export class IndexService {
     finantialID: number,
   ): TE.TaskEither<HttpException, Index> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'Index', PropsCodec),
       TE.chain(() => this.rejectSameIndex(props, finantialID)),
       TE.chain(() => this.getIndex(id, finantialID)),
       TE.chain((updateTarget) =>

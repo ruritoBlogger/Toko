@@ -6,15 +6,14 @@ import * as t from 'io-ts'
 
 export function validateProps<T>(
   props: unknown,
+  moduleName: string,
   codec: t.Type<T>,
 ): TE.TaskEither<HttpException, T> {
   return pipe(
     codec.decode(props),
     E.getOrElseW(() =>
       E.left(
-        new BadRequestException(
-          `IndustryAveIndedx props: ${props} is invalid.`,
-        ),
+        new BadRequestException(`${moduleName} props: ${props} is invalid.`),
       ),
     ),
     TE.fromEither,

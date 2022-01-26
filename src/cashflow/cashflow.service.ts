@@ -52,7 +52,7 @@ export class CashflowService {
     finantialID: number,
   ): TE.TaskEither<HttpException, Cashflow> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'Cashflow', PropsCodec),
       TE.chain(() => this.rejectSameCashflow(props, finantialID)),
       TE.chain((correctProps) =>
         TE.tryCatch(
@@ -88,7 +88,7 @@ export class CashflowService {
     finantialID: number,
   ): TE.TaskEither<HttpException, Cashflow> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'Cashflow', PropsCodec),
       TE.chain(() => this.rejectSameCashflow(props, finantialID)),
       TE.chain(() => this.getCashflow(id, finantialID)),
       TE.chain((updateTarget) =>
