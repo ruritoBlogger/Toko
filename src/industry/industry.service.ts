@@ -46,7 +46,7 @@ export class IndustryService {
 
   addIndustry(props: Props): TE.TaskEither<HttpException, Industry> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'Industry', PropsCodec),
       TE.chain(() => this.rejectSameIndustry(props)),
       TE.chain((correctProps) =>
         TE.tryCatch(
@@ -80,7 +80,7 @@ export class IndustryService {
     id: number,
   ): TE.TaskEither<HttpException, Industry> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'Industry', PropsCodec),
       TE.chain(() => this.rejectSameIndustry(props)),
       TE.chain(() => this.getIndustry(id)),
       TE.chain((updateTarget) =>

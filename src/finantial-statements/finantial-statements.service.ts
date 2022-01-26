@@ -55,7 +55,7 @@ export class FinantialStatementsService {
     companyID: number,
   ): TE.TaskEither<HttpException, FinantialStatements> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'FinantialStatements', PropsCodec),
       TE.chain(() => this.rejectSameStatements(props, companyID)),
       TE.chain((correctProps) =>
         TE.tryCatch(
@@ -91,7 +91,7 @@ export class FinantialStatementsService {
     companyID: number,
   ): TE.TaskEither<HttpException, FinantialStatements> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'FinantialStatements', PropsCodec),
       TE.chain(() => this.rejectSameStatements(props, companyID)),
       TE.chain(() => this.getStatements(id, companyID)),
       TE.chain((updateTarget) =>

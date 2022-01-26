@@ -55,7 +55,7 @@ export class IndustryAveIndexService {
     industryID: number,
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'IndustryAveIndex', PropsCodec),
       TE.chain(() => this.rejectSameIndex(props, industryID)),
       TE.chain((correctProps) =>
         TE.tryCatch(
@@ -93,7 +93,7 @@ export class IndustryAveIndexService {
     industryID: number,
   ): TE.TaskEither<HttpException, IndustryAveIndex> {
     return pipe(
-      validateProps(props, PropsCodec),
+      validateProps(props, 'IndustryAveIndex', PropsCodec),
       TE.chain(() => this.rejectSameIndex(props, industryID)),
       TE.chain(() => this.getIndex(id, industryID)),
       TE.chain((updateTarget) =>
