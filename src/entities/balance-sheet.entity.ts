@@ -37,21 +37,6 @@ export class BalanceSheet {
   @Column({ type: 'double' })
   profitSurplus: number
 
-  @Column({ type: 'double' })
-  cashEquivalent: number
-
-  @Column({ type: 'double' })
-  netCash: number
-
-  @Column({ type: 'double' })
-  depreciation: number
-
-  @Column({ type: 'double' })
-  capitalInvestment: number
-
-  @Column({ type: 'double' })
-  liabilities: number
-
   @CreateDateColumn()
   readonly createdAt: Date
 

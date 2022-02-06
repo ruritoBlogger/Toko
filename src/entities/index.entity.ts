@@ -49,15 +49,6 @@ export class Index {
   @Column({ type: 'double' })
   yieldGap: number
 
-  @Column({ type: 'double' })
-  ebitda: number
-
-  @Column({ type: 'double' })
-  ev: number
-
-  @Column({ type: 'double' })
-  ev_ebitda: number
-
   @CreateDateColumn()
   readonly createdAt: Date
 

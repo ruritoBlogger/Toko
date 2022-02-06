@@ -16,7 +16,6 @@ describe('CashflowService', () => {
     salesCF: 2.21,
     investmentCF: 3.23,
     financialCF: 1.21,
-    cashEquivalent: 3.31,
   }
 
   beforeEach(async () => {

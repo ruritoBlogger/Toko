@@ -21,9 +21,6 @@ describe('IndexService', () => {
     eps: 1.5,
     pcfr: 1.6,
     yieldGap: 1.7,
-    ebitda: 1.8,
-    ev: 1.9,
-    ev_ebitda: 2.0,
   }
 
   beforeEach(async () => {
