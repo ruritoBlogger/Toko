@@ -17,11 +17,6 @@ describe('BalanceSheetService', () => {
     netAssets: 1.2,
     capitalStock: 1.3,
     profitSurplus: 1.4,
-    cashEquivalent: 1.5,
-    netCash: 1.6,
-    depreciation: 1.7,
-    capitalInvestment: 1.8,
-    liabilities: 1.9,
   }
 
   beforeEach(async () => {
@@ -98,10 +93,10 @@ describe('BalanceSheetService', () => {
     expect(
       pipe(
         result,
-        E.map((result) => result.liabilities),
+        E.map((result) => result.netAssets),
         E.getOrElseW(() => 'this test will fail'),
       ),
-    ).toBe(props.liabilities)
+    ).toBe(props.netAssets)
   })
 
   it('should not add sheet with same announcementDate param', async () => {
@@ -150,7 +145,7 @@ describe('BalanceSheetService', () => {
       E.getOrElseW(() => -100),
     )
     const result = await service.updateSheet(
-      { ...props, liabilities: 333.33 },
+      { ...props, netAssets: 333.33 },
       id,
       finantialID,
     )()

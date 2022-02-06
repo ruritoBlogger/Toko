@@ -34,9 +34,6 @@ export class Cashflow {
   @Column({ type: 'double' })
   financialCF: number
 
-  @Column({ type: 'double' })
-  cashEquivalent: number
-
   @CreateDateColumn()
   readonly createdAt: Date
 
