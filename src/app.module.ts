@@ -19,6 +19,7 @@ import { IncomeStatementModule } from './income-statement/income-statement.modul
 import { IndexModule } from './index/index.module'
 import { IndustryModule } from './industry/industry.module'
 import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.module'
+import { StockPriceModule } from './stock-price/stock-price.module'
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { IndustryAveIndexModule } from './industry-ave-index/industry-ave-index.
     CashflowModule,
     BalanceSheetModule,
     IndexModule,
+    StockPriceModule,
   ],
 })
 export class AppModule {}
