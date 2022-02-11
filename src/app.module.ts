@@ -13,6 +13,7 @@ import {
   Index,
   Industry,
   IndustryAveIndex,
+  StockPrice,
 } from './entities'
 import { FinantialStatementsModule } from './finantial-statements/finantial-statements.module'
 import { IncomeStatementModule } from './income-statement/income-statement.module'
@@ -39,6 +40,7 @@ import { StockPriceModule } from './stock-price/stock-price.module'
         Cashflow,
         BalanceSheet,
         Index,
+        StockPrice,
       ],
       synchronize: true,
     }),

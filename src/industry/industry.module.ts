@@ -10,6 +10,7 @@ import {
   Index,
   Industry,
   IndustryAveIndex,
+  StockPrice,
 } from './../entities'
 import { IndustryController } from './industry.controller'
 import { IndustryService } from './industry.service'
@@ -26,6 +27,7 @@ import { IndustryService } from './industry.service'
       Cashflow,
       BalanceSheet,
       Index,
+      StockPrice,
     ]),
   ],
   providers: [IndustryService],

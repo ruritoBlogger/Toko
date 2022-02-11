@@ -11,6 +11,7 @@ import {
   Index,
   Industry,
   IndustryAveIndex,
+  StockPrice,
 } from '../entities'
 
 export const generateTestingModule = async (
@@ -31,6 +32,7 @@ export const generateTestingModule = async (
           Cashflow,
           BalanceSheet,
           Index,
+          StockPrice,
         ],
         synchronize: true,
         keepConnectionAlive: true,
@@ -44,6 +46,7 @@ export const generateTestingModule = async (
         Cashflow,
         BalanceSheet,
         Index,
+        StockPrice,
       ]),
     ],
     providers: services,

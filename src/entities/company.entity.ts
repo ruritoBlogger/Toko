@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-import { FinantialStatements, Industry } from '.'
+import { FinantialStatements, Industry, StockPrice } from '.'
 
 @Entity()
 export class Company {
@@ -28,6 +28,9 @@ export class Company {
     (finantialStatements) => finantialStatements.company,
   )
   finantialStatements: FinantialStatements
+
+  @OneToMany(() => StockPrice, (stockPrice) => stockPrice.company)
+  stockPrice: StockPrice
 
   @Column({ length: 60, unique: true })
   name: string
