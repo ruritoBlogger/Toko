@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import {
-  BalanceSheet,
   Company,
   FinantialStatements,
   Index,
   Industry,
+  StockPrice,
 } from './../entities'
 import { CompanyController } from './company.controller'
 import { CompanyService } from './company.service'
@@ -19,7 +19,7 @@ import { CompanyService } from './company.service'
       Industry,
       FinantialStatements,
       Index,
-      BalanceSheet,
+      StockPrice,
     ]),
   ],
   providers: [CompanyService],
