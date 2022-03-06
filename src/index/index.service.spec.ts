@@ -19,8 +19,6 @@ describe('IndexService', () => {
     per: 1.3,
     pbr: 1.4,
     eps: 1.5,
-    pcfr: 1.6,
-    yieldGap: 1.7,
   }
 
   beforeEach(async () => {

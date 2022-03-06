@@ -7,8 +7,6 @@ export const PropsCodec = t.type({
   per: t.number,
   pbr: t.number,
   eps: t.number,
-  pcfr: t.number,
-  yieldGap: t.number,
 })
 
 export type Props = t.TypeOf<typeof PropsCodec>

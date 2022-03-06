@@ -43,21 +43,6 @@ export class IndustryAveIndex {
   @Column({ type: 'double' })
   eps: number
 
-  @Column({ type: 'double' })
-  pcfr: number
-
-  @Column({ type: 'double' })
-  yieldGap: number
-
-  @Column({ type: 'double' })
-  ebitda: number
-
-  @Column({ type: 'double' })
-  ev: number
-
-  @Column({ type: 'double' })
-  ev_ebitda: number
-
   @CreateDateColumn()
   readonly createdAt: Date
 
