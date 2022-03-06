@@ -5,6 +5,7 @@ export const PropsCodec = t.type({
   netAssets: t.number,
   capitalStock: t.number,
   profitSurplus: t.number,
+  printedNum: t.number,
 })
 
 export type Props = t.TypeOf<typeof PropsCodec>
