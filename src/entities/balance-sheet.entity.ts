@@ -37,6 +37,9 @@ export class BalanceSheet {
   @Column({ type: 'double' })
   profitSurplus: number
 
+  @Column()
+  printedNum: number
+
   @CreateDateColumn()
   readonly createdAt: Date
 

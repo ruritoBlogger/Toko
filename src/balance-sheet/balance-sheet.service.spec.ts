@@ -17,6 +17,7 @@ describe('BalanceSheetService', () => {
     netAssets: 1.2,
     capitalStock: 1.3,
     profitSurplus: 1.4,
+    printedNum: 1500000,
   }
 
   beforeEach(async () => {
