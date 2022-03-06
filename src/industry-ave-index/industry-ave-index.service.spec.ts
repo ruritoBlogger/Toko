@@ -18,11 +18,6 @@ describe('IndustryAveIndexService', () => {
     per: 1.0,
     pbr: 1.0,
     eps: 1.0,
-    pcfr: 1.0,
-    yieldGap: 1.0,
-    ebitda: 1.0,
-    ev: 1.0,
-    ev_ebitda: 1.0,
   }
 
   beforeEach(async () => {
@@ -292,11 +287,6 @@ describe('IndustryAveIndexService', () => {
       per: 1.0,
       pbr: 1.0,
       eps: 1.0,
-      pcfr: 1.0,
-      yieldGap: 1.0,
-      ebitda: 1.0,
-      ev: 1.0,
-      ev_ebitda: 1.0,
     }
 
     const payload = await service.addIndex(props, industryID)()

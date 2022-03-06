@@ -43,12 +43,6 @@ export class Index {
   @Column({ type: 'double' })
   eps: number
 
-  @Column({ type: 'double' })
-  pcfr: number
-
-  @Column({ type: 'double' })
-  yieldGap: number
-
   @CreateDateColumn()
   readonly createdAt: Date
 
