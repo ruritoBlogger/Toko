@@ -66,7 +66,7 @@ export class IndustryAveIndexService {
               Object.assign(correctProps, { industryID: industryID }),
             ),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when addIndex with insert IndustryAveIndex: ${JSON.stringify(
                 correctProps,
               )}`,
@@ -111,7 +111,7 @@ export class IndustryAveIndexService {
               id: updateTarget.id,
             }),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when updateIndex with save IndustryAveIndex props: ${JSON.stringify(
                 updateTarget,
               )}, industryID: ${industryID}, id: ${id}`,
