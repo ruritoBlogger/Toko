@@ -32,13 +32,20 @@ export class CompanyService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne identificationCode: ${props.identificationCode}`,
+            `DB access failed when reject same company with code with findOne: ${JSON.stringify(
+              props,
+            )}`,
           ),
       ),
       TE.chain((result) =>
         // NOTE: 存在する場合 = 重複データありなので失敗扱い
         TE.fromOptionK(
-          () => new ConflictException(`Company ${result} is already existed.`),
+          () =>
+            new ConflictException(
+              `Company already existed when reject same company with code: ${JSON.stringify(
+                result,
+              )}`,
+            ),
         )(() => O.some(props))(),
       ),
     )
@@ -53,13 +60,20 @@ export class CompanyService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne name: ${props.name}`,
+            `DB access failed when reject some company with name with findOne: ${JSON.stringify(
+              props,
+            )}`,
           ),
       ),
       TE.chain((result) =>
         // NOTE: 存在する場合 = 重複データありなので失敗扱い
         TE.fromOptionK(
-          () => new ConflictException(`Company ${result} is already existed.`),
+          () =>
+            new ConflictException(
+              `Company already existed when reject same company with name ${JSON.stringify(
+                result,
+              )}`,
+            ),
         )(() => O.some(props))(),
       ),
     )
@@ -81,7 +95,9 @@ export class CompanyService {
           () => this.companyRepository.insert(correctProps),
           () =>
             new NotFoundException(
-              `DB access afailed with insert Company ${correctProps}`,
+              `DB access failed when addCompany with insert Company ${JSON.stringify(
+                correctProps,
+              )}`,
             ),
         ),
       ),
@@ -94,7 +110,9 @@ export class CompanyService {
             }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with findOne props: ${props}`,
+              `DB access failed when addCompany with findOne: ${JSON.stringify(
+                props,
+              )}`,
             ),
         ),
       ),
@@ -118,7 +136,9 @@ export class CompanyService {
             }),
           () =>
             new NotFoundException(
-              `DB access failed with save Company props: ${updateTarget}, id: ${id}`,
+              `DB access failed when updateCompany with save Company props: ${JSON.stringify(
+                updateTarget,
+              )}, id: ${id}`,
             ),
         ),
       ),
@@ -128,7 +148,10 @@ export class CompanyService {
   getCompanyList(): TE.TaskEither<HttpException, Company[]> {
     return TE.tryCatch(
       () => this.companyRepository.find(),
-      () => new InternalServerErrorException(`DB access failed with find`),
+      () =>
+        new InternalServerErrorException(
+          `DB access failed when getCompanyList with find`,
+        ),
     )
   }
 
@@ -143,12 +166,15 @@ export class CompanyService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne id: ${id}`,
+            `DB access failed when getCompany with findOne id: ${id}`,
           ),
       ),
       // NOTE: findOneのresultはCompanyではなくOption<Company>
       TE.chainOptionK(
-        () => new NotFoundException(`company id: ${id} is not found`),
+        () =>
+          new NotFoundException(
+            `company id: ${id} is not found when getCompany`,
+          ),
       )((payload) => O.fromNullable(payload)),
     )
   }
@@ -161,7 +187,7 @@ export class CompanyService {
           () => this.companyRepository.delete(targetCompany.id),
           () =>
             new InternalServerErrorException(
-              `DB access failed with delete id: ${targetCompany.id}`,
+              `DB access failed when deleteCompany with delete id: ${targetCompany.id}`,
             ),
         ),
       ),
