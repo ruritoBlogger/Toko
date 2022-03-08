@@ -13,7 +13,11 @@ export function validateProps<T>(
     codec.decode(props),
     E.getOrElseW(() =>
       E.left(
-        new BadRequestException(`${moduleName} props: ${props} is invalid.`),
+        new BadRequestException(
+          `${moduleName}: requestBody is invalid. props: ${JSON.stringify(
+            props,
+          )}`,
+        ),
       ),
     ),
     TE.fromEither,

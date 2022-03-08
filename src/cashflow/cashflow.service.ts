@@ -35,13 +35,18 @@ export class CashflowService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne finantialID: ${finantialID}`,
+            `DB access failed when reject same CashFlow with findOne finantialID: ${finantialID}`,
           ),
       ),
       TE.chain((result) =>
         // NOTE: 存在する場合 = 重複データありなので失敗扱い
         TE.fromOptionK(
-          () => new ConflictException(`Cashflow ${result} is already existed.`),
+          () =>
+            new ConflictException(
+              `Cashflow already existed when reject same cashflow: ${JSON.stringify(
+                result,
+              )}`,
+            ),
         )(() => O.some(props))(),
       ),
     )
@@ -62,7 +67,9 @@ export class CashflowService {
             ),
           () =>
             new NotFoundException(
-              `DB access failed with insert Cashflow ${correctProps}`,
+              `DB access failed when addCashFlow with insert Cashflow ${JSON.stringify(
+                correctProps,
+              )}`,
             ),
         ),
       ),
@@ -75,7 +82,9 @@ export class CashflowService {
             }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with findOne props: ${props}`,
+              `DB access failed when addCashFlow with findOne props: ${JSON.stringify(
+                props,
+              )}`,
             ),
         ),
       ),
@@ -101,7 +110,9 @@ export class CashflowService {
             }),
           () =>
             new NotFoundException(
-              `DB access failed with save Cashflow props: ${updateTarget}, id: ${id}`,
+              `DB access failed when updateCashFlow with save Cashflow props: ${JSON.stringify(
+                updateTarget,
+              )}, id: ${id}`,
             ),
         ),
       ),
@@ -116,7 +127,10 @@ export class CashflowService {
         this.cashflowRepository.find({
           where: { finantialID: finantialID },
         }),
-      () => new InternalServerErrorException(`DB access failed with find`),
+      () =>
+        new InternalServerErrorException(
+          `DB access failed when getCashFlowList with find`,
+        ),
     )
   }
 
@@ -135,14 +149,14 @@ export class CashflowService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne id: ${id}, finantialID: ${finantialID}`,
+            `DB access failed when getCashFlow with findOne id: ${id}, finantialID: ${finantialID}`,
           ),
       ),
       // NOTE: findOneのresultはCashflowではなくOption<Cashflow>
       TE.chainOptionK(
         () =>
           new NotFoundException(
-            `Cashflow id: ${id}, finantialID: ${finantialID}  is not found`,
+            `Cashflow id: ${id}, finantialID: ${finantialID}  is not found when getCashFlow`,
           ),
       )((payload) => O.fromNullable(payload)),
     )
@@ -159,7 +173,7 @@ export class CashflowService {
           () => this.cashflowRepository.delete(targetCompany.id),
           () =>
             new InternalServerErrorException(
-              `DB access failed with delete id: ${targetCompany.id}`,
+              `DB access failed when deleteCashFlow with delete id: ${targetCompany.id}`,
             ),
         ),
       ),

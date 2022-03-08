@@ -35,7 +35,7 @@ export class IndustryAveIndexService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne announcementDate: ${props.announcementDate}, industryID: ${industryID}`,
+            `DB access failed when reject same Index with findOne announcementDate: ${props.announcementDate}, industryID: ${industryID}`,
           ),
       ),
       TE.chain((result) =>
@@ -43,7 +43,9 @@ export class IndustryAveIndexService {
         TE.fromOptionK(
           () =>
             new ConflictException(
-              `IndustryAveIndex ${result} is already existed.`,
+              `IndustryAveIndex already existed when reject same index: ${JSON.stringify(
+                result,
+              )}`,
             ),
         )(() => O.some(props))(),
       ),
@@ -65,7 +67,9 @@ export class IndustryAveIndexService {
             ),
           () =>
             new NotFoundException(
-              `DB access failed with insert IndustryAveIndex: ${correctProps}`,
+              `DB access failed when addIndex with insert IndustryAveIndex: ${JSON.stringify(
+                correctProps,
+              )}`,
             ),
         ),
       ),
@@ -80,7 +84,9 @@ export class IndustryAveIndexService {
             }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with findOne props: ${props}`,
+              `DB access failed when addIndex with findOne props: ${JSON.stringify(
+                props,
+              )}`,
             ),
         ),
       ),
@@ -106,7 +112,9 @@ export class IndustryAveIndexService {
             }),
           () =>
             new NotFoundException(
-              `DB access failed with save IndustryAveIndex props: ${updateTarget}, industryID: ${industryID}, id: ${id}`,
+              `DB access failed when updateIndex with save IndustryAveIndex props: ${JSON.stringify(
+                updateTarget,
+              )}, industryID: ${industryID}, id: ${id}`,
             ),
         ),
       ),
@@ -121,7 +129,10 @@ export class IndustryAveIndexService {
         this.industryAveIndexRepository.find({
           where: { industryID: industryID },
         }),
-      () => new InternalServerErrorException(`DB access failed with find`),
+      () =>
+        new InternalServerErrorException(
+          `DB access failed when getIndexList with find`,
+        ),
     )
   }
 
@@ -140,12 +151,15 @@ export class IndustryAveIndexService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne id: ${id}`,
+            `DB access failed when getIndex with findOne id: ${id}`,
           ),
       ),
       // NOTE: findOneのresultはIndustryAveIndexではなくOption<IndustryAveIndex>
       TE.chainOptionK(
-        () => new NotFoundException(`industryAveIndex id: ${id} is not found`),
+        () =>
+          new NotFoundException(
+            `industryAveIndex id: ${id} is not found when getIndex`,
+          ),
       )((payload) => O.fromNullable(payload)),
     )
   }
@@ -168,7 +182,7 @@ export class IndustryAveIndexService {
       TE.chainOptionK(
         () =>
           new NotFoundException(
-            `industryAveIndex industryID: ${industryID} is not found`,
+            `industryAveIndex industryID: ${industryID} is not found when getCurrentIndex`,
           ),
       )((maybeCurrentIndex) => O.fromNullable(maybeCurrentIndex)),
     )
@@ -185,7 +199,7 @@ export class IndustryAveIndexService {
           () => this.industryAveIndexRepository.delete(targetIndex.id),
           () =>
             new InternalServerErrorException(
-              `DB access failed with delete id: ${targetIndex.id}`,
+              `DB access failed when deleteIndex with delete id: ${targetIndex.id}`,
             ),
         ),
       ),

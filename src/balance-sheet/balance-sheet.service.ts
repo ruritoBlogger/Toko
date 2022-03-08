@@ -35,14 +35,18 @@ export class BalanceSheetService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne finantialID: ${finantialID}`,
+            `DB access failed when reject same balanceSheet with findOne finantialID: ${finantialID}`,
           ),
       ),
       TE.chain((result) =>
         // NOTE: 存在する場合 = 重複データありなので失敗扱い
         TE.fromOptionK(
           () =>
-            new ConflictException(`BalanceSheet ${result} is already existed.`),
+            new ConflictException(
+              `BalanceSheet already existed when reject same balanceSheet: ${JSON.stringify(
+                result,
+              )} `,
+            ),
         )(() => O.some(props))(),
       ),
     )
@@ -63,7 +67,9 @@ export class BalanceSheetService {
             ),
           () =>
             new NotFoundException(
-              `DB access failed with insert BalanceSheet ${correctProps}`,
+              `DB access failed when addSheet with insert BalanceSheet: ${JSON.stringify(
+                correctProps,
+              )}`,
             ),
         ),
       ),
@@ -76,7 +82,9 @@ export class BalanceSheetService {
             }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with findOne props: ${props}`,
+              `DB access failed when addSheet with findOne props: ${JSON.stringify(
+                props,
+              )}`,
             ),
         ),
       ),
@@ -102,7 +110,9 @@ export class BalanceSheetService {
             }),
           () =>
             new NotFoundException(
-              `DB access failed with save BalanceSheet props: ${updateTarget}, id: ${id}`,
+              `DB access failed when updateSheet with save BalanceSheet props: ${JSON.stringify(
+                updateTarget,
+              )}, id: ${id}`,
             ),
         ),
       ),
@@ -117,7 +127,10 @@ export class BalanceSheetService {
         this.balanceSheetRepository.find({
           where: { finantialID: finantialID },
         }),
-      () => new InternalServerErrorException(`DB access failed with find`),
+      () =>
+        new InternalServerErrorException(
+          `DB access failed when getSheetList with find`,
+        ),
     )
   }
 
@@ -136,14 +149,14 @@ export class BalanceSheetService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne id: ${id}, finantialID: ${finantialID}`,
+            `DB access failed when getSheet with findOne id: ${id}, finantialID: ${finantialID}`,
           ),
       ),
       // NOTE: findOneのresultはBalanceSheetではなくOption<BalanceSheet>
       TE.chainOptionK(
         () =>
           new NotFoundException(
-            `BalanceSheet id: ${id}, finantialID: ${finantialID}  is not found`,
+            `BalanceSheet id: ${id}, finantialID: ${finantialID}  is not found when getSheet`,
           ),
       )((payload) => O.fromNullable(payload)),
     )
@@ -160,7 +173,7 @@ export class BalanceSheetService {
           () => this.balanceSheetRepository.delete(targetCompany.id),
           () =>
             new InternalServerErrorException(
-              `DB access failed with delete id: ${targetCompany.id}`,
+              `DB access failed when deleteSheet with delete id: ${targetCompany.id}`,
             ),
         ),
       ),

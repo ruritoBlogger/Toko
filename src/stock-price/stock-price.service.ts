@@ -35,14 +35,18 @@ export class StockPriceService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne announcementDate: ${props.date}, companyID: ${companyID}`,
+            `DB access failed when reject same price with findOne announcementDate: ${props.date}, companyID: ${companyID}`,
           ),
       ),
       TE.chain((result) =>
         // NOTE: 存在する場合 = 重複データありなので失敗扱い
         TE.fromOptionK(
           () =>
-            new ConflictException(`StockPrice ${result} is already existed.`),
+            new ConflictException(
+              `StockPrice already existed when reject same price: ${JSON.stringify(
+                result,
+              )}`,
+            ),
         )(() => O.some(props))(),
       ),
     )
@@ -63,7 +67,9 @@ export class StockPriceService {
             ),
           () =>
             new NotFoundException(
-              `DB access failed with insert StockPrice ${correctProps}`,
+              `DB access failed when addPrice with insert StockPrice ${JSON.stringify(
+                correctProps,
+              )}`,
             ),
         ),
       ),
@@ -76,7 +82,9 @@ export class StockPriceService {
             }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with findOne props: ${props}`,
+              `DB access failed when addPrice with findOne props: ${JSON.stringify(
+                props,
+              )}`,
             ),
         ),
       ),
@@ -102,7 +110,9 @@ export class StockPriceService {
             }),
           () =>
             new NotFoundException(
-              `DB access failed with save StockPrice props: ${updateTarget}, id: ${id}`,
+              `DB access failed when updatePrice with save StockPrice props: ${JSON.stringify(
+                updateTarget,
+              )}, id: ${id}`,
             ),
         ),
       ),
@@ -115,7 +125,10 @@ export class StockPriceService {
         this.stockPriceRepository.find({
           where: { companyID: companyID },
         }),
-      () => new InternalServerErrorException(`DB access failed with find`),
+      () =>
+        new InternalServerErrorException(
+          `DB access failed when getPriceList with find`,
+        ),
     )
   }
 
@@ -134,14 +147,14 @@ export class StockPriceService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne id: ${id}, companyID: ${companyID}`,
+            `DB access failed when getPrice with findOne id: ${id}, companyID: ${companyID}`,
           ),
       ),
       // NOTE: findOneのresultはStockPriceではなくOption<StockPrice>
       TE.chainOptionK(
         () =>
           new NotFoundException(
-            `StockPrice id: ${id}, companyID: ${companyID}  is not found`,
+            `StockPrice id: ${id}, companyID: ${companyID}  is not found when getPrice`,
           ),
       )((payload) => O.fromNullable(payload)),
     )
@@ -160,7 +173,7 @@ export class StockPriceService {
       TE.chainOptionK(
         () =>
           new NotFoundException(
-            `StockPrice companyID: ${companyID}  is not found`,
+            `StockPrice companyID: ${companyID}  is not found when getCurrentPrice`,
           ),
       )((maybePrice) => O.fromNullable(maybePrice)),
     )
@@ -177,7 +190,7 @@ export class StockPriceService {
           () => this.stockPriceRepository.delete(targetCompany.id),
           () =>
             new InternalServerErrorException(
-              `DB access failed with delete id: ${targetCompany.id}`,
+              `DB access failed when deletePrice with delete id: ${targetCompany.id}`,
             ),
         ),
       ),

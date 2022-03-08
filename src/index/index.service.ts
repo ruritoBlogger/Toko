@@ -35,13 +35,18 @@ export class IndexService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne finantialID: ${finantialID}`,
+            `DB access failed when reject same index with findOne finantialID: ${finantialID}`,
           ),
       ),
       TE.chain((result) =>
         // NOTE: 存在する場合 = 重複データありなので失敗扱い
         TE.fromOptionK(
-          () => new ConflictException(`Index ${result} is already existed.`),
+          () =>
+            new ConflictException(
+              `Index already existed when reject same index: ${JSON.stringify(
+                result,
+              )}`,
+            ),
         )(() => O.some(props))(),
       ),
     )
@@ -62,7 +67,9 @@ export class IndexService {
             ),
           () =>
             new NotFoundException(
-              `DB access failed with insert Index ${correctProps}`,
+              `DB access failed when addIndex with insert Index ${JSON.stringify(
+                correctProps,
+              )}`,
             ),
         ),
       ),
@@ -75,7 +82,9 @@ export class IndexService {
             }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with findOne props: ${props}`,
+              `DB access failed when addIndex with findOne props: ${JSON.stringify(
+                props,
+              )}`,
             ),
         ),
       ),
@@ -101,7 +110,9 @@ export class IndexService {
             }),
           () =>
             new NotFoundException(
-              `DB access failed with save Index props: ${updateTarget}, id: ${id}`,
+              `DB access failed when updateIndex with save Index props: ${JSON.stringify(
+                updateTarget,
+              )}, id: ${id}`,
             ),
         ),
       ),
@@ -114,7 +125,10 @@ export class IndexService {
         this.indexRepository.find({
           where: { finantialID: finantialID },
         }),
-      () => new InternalServerErrorException(`DB access failed with find`),
+      () =>
+        new InternalServerErrorException(
+          `DB access failed when getIndexList with find`,
+        ),
     )
   }
 
@@ -133,14 +147,14 @@ export class IndexService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne id: ${id}, finantialID: ${finantialID}`,
+            `DB access failed when getIndex with findOne id: ${id}, finantialID: ${finantialID}`,
           ),
       ),
       // NOTE: findOneのresultはIndexではなくOption<IncomeIndex>
       TE.chainOptionK(
         () =>
           new NotFoundException(
-            `Index id: ${id}, finantialID: ${finantialID}  is not found`,
+            `Index id: ${id}, finantialID: ${finantialID}  is not found when getIndex`,
           ),
       )((payload) => O.fromNullable(payload)),
     )
@@ -157,7 +171,7 @@ export class IndexService {
           () => this.indexRepository.delete(targetCompany.id),
           () =>
             new InternalServerErrorException(
-              `DB access failed with delete id: ${targetCompany.id}`,
+              `DB access failed when deleteIndex with delete id: ${targetCompany.id}`,
             ),
         ),
       ),

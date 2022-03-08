@@ -29,7 +29,7 @@ export class IndustryService {
         () => this.industryRepository.findOne({ where: { name: props.name } }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne name: ${props.name}`,
+            `DB access failed when reject same industry with findOne name: ${props.name}`,
           ),
       ),
       TE.chain((result) =>
@@ -37,7 +37,9 @@ export class IndustryService {
         TE.fromOptionK(
           () =>
             new ConflictException(
-              `industry ${result.name} is already existed.`,
+              `industry already existed when reject same industry: ${JSON.stringify(
+                result,
+              )}`,
             ),
         )(() => O.some(props))(),
       ),
@@ -53,7 +55,9 @@ export class IndustryService {
           () => this.industryRepository.insert(correctProps),
           () =>
             new InternalServerErrorException(
-              `DB access failed with insert props: ${correctProps.name}`,
+              `DB access failed when addIndustry with insert props: ${JSON.stringify(
+                correctProps,
+              )}`,
             ),
         ),
       ),
@@ -68,7 +72,7 @@ export class IndustryService {
             }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with findOne id: ${insertedObjectID}`,
+              `DB access failed when addIndustry with findOne id: ${insertedObjectID}`,
             ),
         ),
       ),
@@ -92,7 +96,7 @@ export class IndustryService {
             }),
           () =>
             new InternalServerErrorException(
-              `DB access failed with save id: ${updateTarget.id}, name: ${props.name}`,
+              `DB access failed when updateIndustry with save id: ${updateTarget.id}, name: ${props.name}`,
             ),
         ),
       ),
@@ -102,7 +106,10 @@ export class IndustryService {
   getIndustyList(): TE.TaskEither<HttpException, Industry[]> {
     return TE.tryCatch(
       () => this.industryRepository.find(),
-      () => new InternalServerErrorException('DB access failed with find'),
+      () =>
+        new InternalServerErrorException(
+          'DB access failed when getIndustryList with find',
+        ),
     )
   }
 
@@ -117,12 +124,15 @@ export class IndustryService {
           }),
         () =>
           new InternalServerErrorException(
-            `DB access failed with findOne id: ${id}`,
+            `DB access failed when getIndustry with findOne id: ${id}`,
           ),
       ),
       // NOTE: findOneのresultはIndustryではなくOption<Industry>
       TE.chainOptionK(
-        () => new NotFoundException(`industry id: ${id} is not found`),
+        () =>
+          new NotFoundException(
+            `industry id: ${id} is not found when getIndustry`,
+          ),
       )((payload) => O.fromNullable(payload)),
     )
   }
@@ -135,7 +145,7 @@ export class IndustryService {
           () => this.industryRepository.delete(targetIndustry.id),
           () =>
             new InternalServerErrorException(
-              `DB access failed with delete id: ${targetIndustry.id}`,
+              `DB access failed when deleteIndustry with delete id: ${targetIndustry.id}`,
             ),
         ),
       ),
