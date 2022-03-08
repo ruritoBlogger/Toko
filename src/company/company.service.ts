@@ -94,7 +94,7 @@ export class CompanyService {
         TE.tryCatch(
           () => this.companyRepository.insert(correctProps),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when addCompany with insert Company ${JSON.stringify(
                 correctProps,
               )}`,
@@ -135,7 +135,7 @@ export class CompanyService {
               id: updateTarget.id,
             }),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when updateCompany with save Company props: ${JSON.stringify(
                 updateTarget,
               )}, id: ${id}`,

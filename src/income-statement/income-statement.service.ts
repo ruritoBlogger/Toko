@@ -66,7 +66,7 @@ export class IncomeStatementService {
               Object.assign(correctProps, { finantialID: finantialID }),
             ),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when addIncomeStatement with insert IncomeStatement ${JSON.stringify(
                 correctProps,
               )}`,
@@ -109,7 +109,7 @@ export class IncomeStatementService {
               id: updateTarget.id,
             }),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed with save IncomeStatement props: ${JSON.stringify(
                 updateTarget,
               )}, id: ${id}`,

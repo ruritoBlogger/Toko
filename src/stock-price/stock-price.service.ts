@@ -66,7 +66,7 @@ export class StockPriceService {
               Object.assign(correctProps, { companyID: companyID }),
             ),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when addPrice with insert StockPrice ${JSON.stringify(
                 correctProps,
               )}`,
@@ -109,7 +109,7 @@ export class StockPriceService {
               id: updateTarget.id,
             }),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when updatePrice with save StockPrice props: ${JSON.stringify(
                 updateTarget,
               )}, id: ${id}`,

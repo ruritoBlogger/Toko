@@ -66,7 +66,7 @@ export class IndexService {
               Object.assign(correctProps, { finantialID: finantialID }),
             ),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when addIndex with insert Index ${JSON.stringify(
                 correctProps,
               )}`,
@@ -109,7 +109,7 @@ export class IndexService {
               id: updateTarget.id,
             }),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when updateIndex with save Index props: ${JSON.stringify(
                 updateTarget,
               )}, id: ${id}`,

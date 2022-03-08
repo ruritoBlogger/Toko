@@ -66,7 +66,7 @@ export class CashflowService {
               Object.assign(correctProps, { finantialID: finantialID }),
             ),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when addCashFlow with insert Cashflow ${JSON.stringify(
                 correctProps,
               )}`,
@@ -109,7 +109,7 @@ export class CashflowService {
               id: updateTarget.id,
             }),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when updateCashFlow with save Cashflow props: ${JSON.stringify(
                 updateTarget,
               )}, id: ${id}`,

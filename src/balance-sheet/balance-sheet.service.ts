@@ -66,7 +66,7 @@ export class BalanceSheetService {
               Object.assign(correctProps, { finantialID: finantialID }),
             ),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when addSheet with insert BalanceSheet: ${JSON.stringify(
                 correctProps,
               )}`,
@@ -109,7 +109,7 @@ export class BalanceSheetService {
               id: updateTarget.id,
             }),
           () =>
-            new NotFoundException(
+            new InternalServerErrorException(
               `DB access failed when updateSheet with save BalanceSheet props: ${JSON.stringify(
                 updateTarget,
               )}, id: ${id}`,
