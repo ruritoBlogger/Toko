@@ -3,9 +3,10 @@ services:
   db_data:
     image: busybox
     volumes:
-      - /var/lib/mysql
+      - ./db:/var/lib/mysql
   db:
     image: mysql:5.7
+    build: ./db/
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     volumes_from:
       - db_data
