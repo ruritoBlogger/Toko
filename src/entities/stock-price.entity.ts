@@ -34,7 +34,7 @@ export class StockPrice {
   @Column({ type: 'double' })
   lowPrice: number
 
-  @Column({ unique: true })
+  @Column()
   date: Date
 
   @CreateDateColumn()
