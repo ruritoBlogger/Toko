@@ -11,7 +11,11 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import { IncomeStatement } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
@@ -33,9 +37,12 @@ export class IncomeStatementService {
           this.incomeStatementRepository.findOne({
             where: { finantialID: finantialID },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same income-statement with findOne finantialID: ${finantialID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same income-statement with findOne finantialID: ${finantialID}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -65,11 +72,14 @@ export class IncomeStatementService {
             this.incomeStatementRepository.insert(
               Object.assign(correctProps, { finantialID: finantialID }),
             ),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addIncomeStatement with insert IncomeStatement ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addIncomeStatement with insert IncomeStatement ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -80,11 +90,14 @@ export class IncomeStatementService {
             this.incomeStatementRepository.findOne({
               where: { id: insertedObjectID },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addIncomeStatement with findOne props: ${JSON.stringify(
-                props,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addIncomeStatement with findOne props: ${JSON.stringify(
+                  props,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -108,11 +121,14 @@ export class IncomeStatementService {
               finantialID: finantialID,
               id: updateTarget.id,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed with save IncomeStatement props: ${JSON.stringify(
-                updateTarget,
-              )}, id: ${id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed with save IncomeStatement props: ${JSON.stringify(
+                  updateTarget,
+                )}, id: ${id}`,
+              ),
             ),
         ),
       ),
@@ -127,9 +143,12 @@ export class IncomeStatementService {
         this.incomeStatementRepository.find({
           where: { finantialID: finantialID },
         }),
-      () =>
-        new InternalServerErrorException(
-          `DB access failed when getIncomeStatementList with find`,
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            `DB access failed when getIncomeStatementList with find`,
+          ),
         ),
     )
   }
@@ -147,9 +166,12 @@ export class IncomeStatementService {
               finantialID: finantialID,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getIncomeStatement with findOne id: ${id}, finantialID: ${finantialID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getIncomeStatement with findOne id: ${id}, finantialID: ${finantialID}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはIncomeStatementではなくOption<IncomeStatement>
@@ -171,9 +193,12 @@ export class IncomeStatementService {
       TE.chain((targetCompany) =>
         TE.tryCatch(
           () => this.incomeStatementRepository.delete(targetCompany.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deleteIncomeStatement with delete id: ${targetCompany.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deleteIncomeStatement with delete id: ${targetCompany.id}`,
+              ),
             ),
         ),
       ),

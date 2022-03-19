@@ -11,7 +11,11 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import { Company } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
@@ -30,11 +34,14 @@ export class CompanyService {
           this.companyRepository.findOne({
             where: { identificationCode: props.identificationCode },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same company with code with findOne: ${JSON.stringify(
-              props,
-            )}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same company with code with findOne: ${JSON.stringify(
+                props,
+              )}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -58,11 +65,14 @@ export class CompanyService {
           this.companyRepository.findOne({
             where: { name: props.name },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject some company with name with findOne: ${JSON.stringify(
-              props,
-            )}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject some company with name with findOne: ${JSON.stringify(
+                props,
+              )}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -93,11 +103,14 @@ export class CompanyService {
       TE.chain((correctProps) =>
         TE.tryCatch(
           () => this.companyRepository.insert(correctProps),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addCompany with insert Company ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addCompany with insert Company ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -108,11 +121,14 @@ export class CompanyService {
             this.companyRepository.findOne({
               where: { id: insertedObjectID },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addCompany with findOne: ${JSON.stringify(
-                props,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addCompany with findOne: ${JSON.stringify(
+                  props,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -134,11 +150,14 @@ export class CompanyService {
               ...props,
               id: updateTarget.id,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when updateCompany with save Company props: ${JSON.stringify(
-                updateTarget,
-              )}, id: ${id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when updateCompany with save Company props: ${JSON.stringify(
+                  updateTarget,
+                )}, id: ${id}`,
+              ),
             ),
         ),
       ),
@@ -148,9 +167,12 @@ export class CompanyService {
   getCompanyList(): TE.TaskEither<HttpException, Company[]> {
     return TE.tryCatch(
       () => this.companyRepository.find(),
-      () =>
-        new InternalServerErrorException(
-          `DB access failed when getCompanyList with find`,
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            `DB access failed when getCompanyList with find`,
+          ),
         ),
     )
   }
@@ -164,9 +186,12 @@ export class CompanyService {
               id: id,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getCompany with findOne id: ${id}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getCompany with findOne id: ${id}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはCompanyではなくOption<Company>
@@ -185,9 +210,12 @@ export class CompanyService {
       TE.chain((targetCompany) =>
         TE.tryCatch(
           () => this.companyRepository.delete(targetCompany.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deleteCompany with delete id: ${targetCompany.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deleteCompany with delete id: ${targetCompany.id}`,
+              ),
             ),
         ),
       ),

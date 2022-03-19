@@ -11,7 +11,11 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import { StockPrice } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
@@ -33,9 +37,12 @@ export class StockPriceService {
           this.stockPriceRepository.findOne({
             where: { date: props.date, companyID },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same price with findOne announcementDate: ${props.date}, companyID: ${companyID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same price with findOne announcementDate: ${props.date}, companyID: ${companyID}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -65,11 +72,14 @@ export class StockPriceService {
             this.stockPriceRepository.insert(
               Object.assign(correctProps, { companyID: companyID }),
             ),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addPrice with insert StockPrice ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addPrice with insert StockPrice ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -80,11 +90,14 @@ export class StockPriceService {
             this.stockPriceRepository.findOne({
               where: { id: insertedObjectID },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addPrice with findOne props: ${JSON.stringify(
-                props,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addPrice with findOne props: ${JSON.stringify(
+                  props,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -108,11 +121,14 @@ export class StockPriceService {
               companyID: companyID,
               id: updateTarget.id,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when updatePrice with save StockPrice props: ${JSON.stringify(
-                updateTarget,
-              )}, id: ${id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when updatePrice with save StockPrice props: ${JSON.stringify(
+                  updateTarget,
+                )}, id: ${id}`,
+              ),
             ),
         ),
       ),
@@ -125,9 +141,12 @@ export class StockPriceService {
         this.stockPriceRepository.find({
           where: { companyID: companyID },
         }),
-      () =>
-        new InternalServerErrorException(
-          `DB access failed when getPriceList with find`,
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            `DB access failed when getPriceList with find`,
+          ),
         ),
     )
   }
@@ -145,9 +164,12 @@ export class StockPriceService {
               companyID: companyID,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getPrice with findOne id: ${id}, companyID: ${companyID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getPrice with findOne id: ${id}, companyID: ${companyID}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはStockPriceではなくOption<StockPrice>
@@ -188,9 +210,12 @@ export class StockPriceService {
       TE.chain((targetCompany) =>
         TE.tryCatch(
           () => this.stockPriceRepository.delete(targetCompany.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deletePrice with delete id: ${targetCompany.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deletePrice with delete id: ${targetCompany.id}`,
+              ),
             ),
         ),
       ),

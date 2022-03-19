@@ -6,12 +6,16 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { pipe } from 'fp-ts/function'
+import { flow, pipe } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import { FinantialStatements } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
@@ -33,9 +37,12 @@ export class FinantialStatementsService {
           this.finantialStatementsRepository.findOne({
             where: { announcementDate: props.announcementDate, companyID },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same statements with findOne announcementDate: ${props.announcementDate}, companyID: ${companyID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same statements with findOne announcementDate: ${props.announcementDate}, companyID: ${companyID}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -65,11 +72,14 @@ export class FinantialStatementsService {
             this.finantialStatementsRepository.insert(
               Object.assign(correctProps, { companyID: companyID }),
             ),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addStatements with insert FinantialStatements ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addStatements with insert FinantialStatements ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -80,11 +90,14 @@ export class FinantialStatementsService {
             this.finantialStatementsRepository.findOne({
               where: { id: insertedObjectID },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addStatements with findOne props: ${JSON.stringify(
-                props,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addStatements with findOne props: ${JSON.stringify(
+                  props,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -108,11 +121,14 @@ export class FinantialStatementsService {
               companyID: companyID,
               id: updateTarget.id,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when updateStatements with save FinantialStatements props: ${JSON.stringify(
-                updateTarget,
-              )}, id: ${id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when updateStatements with save FinantialStatements props: ${JSON.stringify(
+                  updateTarget,
+                )}, id: ${id}`,
+              ),
             ),
         ),
       ),
@@ -127,9 +143,12 @@ export class FinantialStatementsService {
         this.finantialStatementsRepository.find({
           where: { companyID: companyID },
         }),
-      () =>
-        new InternalServerErrorException(
-          `DB access failed when getStatementsList with find`,
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            `DB access failed when getStatementsList with find`,
+          ),
         ),
     )
   }
@@ -147,9 +166,12 @@ export class FinantialStatementsService {
               companyID: companyID,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getStatements with findOne id: ${id}, companyID: ${companyID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getStatements with findOne id: ${id}, companyID: ${companyID}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはFinantialStatementsではなくOption<FinantialStatements>
@@ -195,9 +217,12 @@ export class FinantialStatementsService {
       TE.chain((targetCompany) =>
         TE.tryCatch(
           () => this.finantialStatementsRepository.delete(targetCompany.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deleteStatements with delete id: ${targetCompany.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deleteStatements with delete id: ${targetCompany.id}`,
+              ),
             ),
         ),
       ),

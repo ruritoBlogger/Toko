@@ -11,7 +11,11 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import { BalanceSheet } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
@@ -33,9 +37,12 @@ export class BalanceSheetService {
           this.balanceSheetRepository.findOne({
             where: { finantialID: finantialID },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same balanceSheet with findOne finantialID: ${finantialID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same balanceSheet with findOne finantialID: ${finantialID}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -65,11 +72,14 @@ export class BalanceSheetService {
             this.balanceSheetRepository.insert(
               Object.assign(correctProps, { finantialID: finantialID }),
             ),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addSheet with insert BalanceSheet: ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addSheet with insert BalanceSheet: ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -80,11 +90,14 @@ export class BalanceSheetService {
             this.balanceSheetRepository.findOne({
               where: { id: insertedObjectID },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addSheet with findOne props: ${JSON.stringify(
-                props,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addSheet with findOne props: ${JSON.stringify(
+                  props,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -108,11 +121,14 @@ export class BalanceSheetService {
               finantialID: finantialID,
               id: updateTarget.id,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when updateSheet with save BalanceSheet props: ${JSON.stringify(
-                updateTarget,
-              )}, id: ${id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when updateSheet with save BalanceSheet props: ${JSON.stringify(
+                  updateTarget,
+                )}, id: ${id}`,
+              ),
             ),
         ),
       ),
@@ -127,9 +143,12 @@ export class BalanceSheetService {
         this.balanceSheetRepository.find({
           where: { finantialID: finantialID },
         }),
-      () =>
-        new InternalServerErrorException(
-          `DB access failed when getSheetList with find`,
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            `DB access failed when getSheetList with find`,
+          ),
         ),
     )
   }
@@ -147,9 +166,12 @@ export class BalanceSheetService {
               finantialID: finantialID,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getSheet with findOne id: ${id}, finantialID: ${finantialID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getSheet with findOne id: ${id}, finantialID: ${finantialID}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはBalanceSheetではなくOption<BalanceSheet>
@@ -171,9 +193,12 @@ export class BalanceSheetService {
       TE.chain((targetCompany) =>
         TE.tryCatch(
           () => this.balanceSheetRepository.delete(targetCompany.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deleteSheet with delete id: ${targetCompany.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deleteSheet with delete id: ${targetCompany.id}`,
+              ),
             ),
         ),
       ),

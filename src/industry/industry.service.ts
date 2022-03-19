@@ -12,7 +12,11 @@ import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
 import { Industry } from '../entities/'
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import type { Props } from './type'
 import { PropsCodec } from './type'
 
@@ -27,9 +31,12 @@ export class IndustryService {
     return pipe(
       TE.tryCatch(
         () => this.industryRepository.findOne({ where: { name: props.name } }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same industry with findOne name: ${props.name}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same industry with findOne name: ${props.name}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -53,11 +60,14 @@ export class IndustryService {
       TE.chain((correctProps) =>
         TE.tryCatch(
           () => this.industryRepository.insert(correctProps),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addIndustry with insert props: ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addIndustry with insert props: ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -70,9 +80,12 @@ export class IndustryService {
                 id: insertedObjectID,
               },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addIndustry with findOne id: ${insertedObjectID}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addIndustry with findOne id: ${insertedObjectID}`,
+              ),
             ),
         ),
       ),
@@ -94,9 +107,12 @@ export class IndustryService {
               id: updateTarget.id,
               name: props.name,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when updateIndustry with save id: ${updateTarget.id}, name: ${props.name}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when updateIndustry with save id: ${updateTarget.id}, name: ${props.name}`,
+              ),
             ),
         ),
       ),
@@ -106,9 +122,12 @@ export class IndustryService {
   getIndustyList(): TE.TaskEither<HttpException, Industry[]> {
     return TE.tryCatch(
       () => this.industryRepository.find(),
-      () =>
-        new InternalServerErrorException(
-          'DB access failed when getIndustryList with find',
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            'DB access failed when getIndustryList with find',
+          ),
         ),
     )
   }
@@ -122,9 +141,12 @@ export class IndustryService {
               id: id,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getIndustry with findOne id: ${id}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getIndustry with findOne id: ${id}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはIndustryではなくOption<Industry>
@@ -143,9 +165,12 @@ export class IndustryService {
       TE.chain((targetIndustry) =>
         TE.tryCatch(
           () => this.industryRepository.delete(targetIndustry.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deleteIndustry with delete id: ${targetIndustry.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deleteIndustry with delete id: ${targetIndustry.id}`,
+              ),
             ),
         ),
       ),

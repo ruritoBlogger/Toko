@@ -11,7 +11,11 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import { IndustryAveIndex } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
@@ -33,9 +37,12 @@ export class IndustryAveIndexService {
           this.industryAveIndexRepository.findOne({
             where: { announcementDate: props.announcementDate, industryID },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same Index with findOne announcementDate: ${props.announcementDate}, industryID: ${industryID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same Index with findOne announcementDate: ${props.announcementDate}, industryID: ${industryID}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -65,11 +72,14 @@ export class IndustryAveIndexService {
             this.industryAveIndexRepository.insert(
               Object.assign(correctProps, { industryID: industryID }),
             ),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addIndex with insert IndustryAveIndex: ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addIndex with insert IndustryAveIndex: ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -82,11 +92,14 @@ export class IndustryAveIndexService {
                 id: insertedObjectID,
               },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addIndex with findOne props: ${JSON.stringify(
-                props,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addIndex with findOne props: ${JSON.stringify(
+                  props,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -110,11 +123,14 @@ export class IndustryAveIndexService {
               industryID: industryID,
               id: updateTarget.id,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when updateIndex with save IndustryAveIndex props: ${JSON.stringify(
-                updateTarget,
-              )}, industryID: ${industryID}, id: ${id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when updateIndex with save IndustryAveIndex props: ${JSON.stringify(
+                  updateTarget,
+                )}, industryID: ${industryID}, id: ${id}`,
+              ),
             ),
         ),
       ),
@@ -129,9 +145,12 @@ export class IndustryAveIndexService {
         this.industryAveIndexRepository.find({
           where: { industryID: industryID },
         }),
-      () =>
-        new InternalServerErrorException(
-          `DB access failed when getIndexList with find`,
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            `DB access failed when getIndexList with find`,
+          ),
         ),
     )
   }
@@ -149,9 +168,12 @@ export class IndustryAveIndexService {
               industryID: industryID,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getIndex with findOne id: ${id}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getIndex with findOne id: ${id}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはIndustryAveIndexではなくOption<IndustryAveIndex>
@@ -197,9 +219,12 @@ export class IndustryAveIndexService {
       TE.chain((targetIndex) =>
         TE.tryCatch(
           () => this.industryAveIndexRepository.delete(targetIndex.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deleteIndex with delete id: ${targetIndex.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deleteIndex with delete id: ${targetIndex.id}`,
+              ),
             ),
         ),
       ),
