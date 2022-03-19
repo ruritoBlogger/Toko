@@ -41,7 +41,7 @@ export class FinantialStatements {
   @OneToMany(() => Index, (index) => index.finantialStatements)
   index: Index
 
-  @Column({ unique: true })
+  @Column()
   announcementDate: Date
 
   @Column()
