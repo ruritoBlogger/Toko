@@ -11,7 +11,11 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import { Cashflow } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
@@ -33,9 +37,12 @@ export class CashflowService {
           this.cashflowRepository.findOne({
             where: { finantialID: finantialID },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same CashFlow with findOne finantialID: ${finantialID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same CashFlow with findOne finantialID: ${finantialID}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -65,11 +72,14 @@ export class CashflowService {
             this.cashflowRepository.insert(
               Object.assign(correctProps, { finantialID: finantialID }),
             ),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addCashFlow with insert Cashflow ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addCashFlow with insert Cashflow ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -80,11 +90,14 @@ export class CashflowService {
             this.cashflowRepository.findOne({
               where: { id: insertedObjectID },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addCashFlow with findOne props: ${JSON.stringify(
-                props,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addCashFlow with findOne props: ${JSON.stringify(
+                  props,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -108,11 +121,14 @@ export class CashflowService {
               finantialID: finantialID,
               id: updateTarget.id,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when updateCashFlow with save Cashflow props: ${JSON.stringify(
-                updateTarget,
-              )}, id: ${id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when updateCashFlow with save Cashflow props: ${JSON.stringify(
+                  updateTarget,
+                )}, id: ${id}`,
+              ),
             ),
         ),
       ),
@@ -127,9 +143,12 @@ export class CashflowService {
         this.cashflowRepository.find({
           where: { finantialID: finantialID },
         }),
-      () =>
-        new InternalServerErrorException(
-          `DB access failed when getCashFlowList with find`,
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            `DB access failed when getCashFlowList with find`,
+          ),
         ),
     )
   }
@@ -147,9 +166,12 @@ export class CashflowService {
               finantialID: finantialID,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getCashFlow with findOne id: ${id}, finantialID: ${finantialID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getCashFlow with findOne id: ${id}, finantialID: ${finantialID}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはCashflowではなくOption<Cashflow>
@@ -171,9 +193,12 @@ export class CashflowService {
       TE.chain((targetCompany) =>
         TE.tryCatch(
           () => this.cashflowRepository.delete(targetCompany.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deleteCashFlow with delete id: ${targetCompany.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deleteCashFlow with delete id: ${targetCompany.id}`,
+              ),
             ),
         ),
       ),

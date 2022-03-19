@@ -11,7 +11,11 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import { Repository } from 'typeorm'
 
-import { selectIdentifyNumberFromInsert, validateProps } from '../utils'
+import {
+  printException,
+  selectIdentifyNumberFromInsert,
+  validateProps,
+} from '../utils'
 import { Index } from './../entities'
 import type { Props } from './type'
 import { PropsCodec } from './type'
@@ -33,9 +37,12 @@ export class IndexService {
           this.indexRepository.findOne({
             where: { finantialID: finantialID },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when reject same index with findOne finantialID: ${finantialID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when reject same index with findOne finantialID: ${finantialID}`,
+            ),
           ),
       ),
       TE.chain((result) =>
@@ -65,11 +72,14 @@ export class IndexService {
             this.indexRepository.insert(
               Object.assign(correctProps, { finantialID: finantialID }),
             ),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addIndex with insert Index ${JSON.stringify(
-                correctProps,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addIndex with insert Index ${JSON.stringify(
+                  correctProps,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -80,11 +90,14 @@ export class IndexService {
             this.indexRepository.findOne({
               where: { id: insertedObjectID },
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when addIndex with findOne props: ${JSON.stringify(
-                props,
-              )}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when addIndex with findOne props: ${JSON.stringify(
+                  props,
+                )}`,
+              ),
             ),
         ),
       ),
@@ -108,11 +121,14 @@ export class IndexService {
               finantialID: finantialID,
               id: updateTarget.id,
             }),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when updateIndex with save Index props: ${JSON.stringify(
-                updateTarget,
-              )}, id: ${id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when updateIndex with save Index props: ${JSON.stringify(
+                  updateTarget,
+                )}, id: ${id}`,
+              ),
             ),
         ),
       ),
@@ -125,9 +141,12 @@ export class IndexService {
         this.indexRepository.find({
           where: { finantialID: finantialID },
         }),
-      () =>
-        new InternalServerErrorException(
-          `DB access failed when getIndexList with find`,
+      (e) =>
+        printException(
+          e,
+          new InternalServerErrorException(
+            `DB access failed when getIndexList with find`,
+          ),
         ),
     )
   }
@@ -145,9 +164,12 @@ export class IndexService {
               finantialID: finantialID,
             },
           }),
-        () =>
-          new InternalServerErrorException(
-            `DB access failed when getIndex with findOne id: ${id}, finantialID: ${finantialID}`,
+        (e) =>
+          printException(
+            e,
+            new InternalServerErrorException(
+              `DB access failed when getIndex with findOne id: ${id}, finantialID: ${finantialID}`,
+            ),
           ),
       ),
       // NOTE: findOneのresultはIndexではなくOption<IncomeIndex>
@@ -169,9 +191,12 @@ export class IndexService {
       TE.chain((targetCompany) =>
         TE.tryCatch(
           () => this.indexRepository.delete(targetCompany.id),
-          () =>
-            new InternalServerErrorException(
-              `DB access failed when deleteIndex with delete id: ${targetCompany.id}`,
+          (e) =>
+            printException(
+              e,
+              new InternalServerErrorException(
+                `DB access failed when deleteIndex with delete id: ${targetCompany.id}`,
+              ),
             ),
         ),
       ),
