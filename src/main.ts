@@ -5,11 +5,12 @@ import { AppModule } from './app.module'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  // TODO: 正確な値に設定する
   app.enableCors({
-    origin: 'http://localhost:3001',
+    origin: process.env.TOKO_ORIGIN,
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
   })
 
-  await app.listen(3000)
+  await app.listen(parseInt(process.env.TOKO_PORT))
 }
 bootstrap()
