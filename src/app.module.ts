@@ -27,8 +27,7 @@ import { StockPriceModule } from './stock-price/stock-price.module'
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      // TODO: mariadbに移行する
-      type: 'mysql',
+      type: 'mariadb',
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT),
       username: process.env.DB_USER,
