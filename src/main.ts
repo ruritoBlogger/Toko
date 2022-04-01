@@ -7,7 +7,7 @@ async function bootstrap() {
 
   // TODO: 正確な値に設定する
   app.enableCors({
-    origin: process.env.TOKO_ORIGIN,
+    origin: `${process.env.LIZE_URL}:${process.env.LIZE_PORT}`,
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
   })
 
