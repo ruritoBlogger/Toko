@@ -39,6 +39,7 @@ REST API で構成しています.
 │    │    └─ **.entity.ts # **のエンティティクラスを実装
 │    ├─ utils
 │    │    ├─ generateTestingModule.ts # TestingModuleの生成を担う
+│    │    ├─ printException.ts # fp-ts/pipeの途中にログ出力したい時に使う
 │    │    ├─ returnWithThrowHttpException.ts # Controllerにて例外をいい感じにする
 │    │    ├─ validateIdentify.ts # DBの操作結果からidを抽出する
 │    │    └─ validateWithTaskEither.ts # requestに付随するパラメーターの型検査を実施
@@ -47,6 +48,7 @@ REST API で構成しています.
 ├── test # e2eテスト置き場(未実装)
 ├── docker-compose.yml # mysqlを用いたDBの設定の管理
 ├── nest-cli.json # Nest.jsの設定の管理
+├── .env # 環境変数置き場
 └── ormconfig.json # Nest.jsの設定の管理
 ```
 
@@ -58,6 +60,10 @@ $ yarn
 # mock serverを起動する場合
 $ cd mock
 $ yarn
+
+$ cp .env.sample .env
+# 環境変数を書き込む
+$ vim .env
 ```
 
 ## 開発
