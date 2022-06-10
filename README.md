@@ -96,9 +96,21 @@ $ yarn test:e2e
 $ yarn test:cov
 ```
 
+## Release
+ghcrに上げているイメージを更新する方法
+```bash
+$ git tag vx.x.x
+
+$ git push origin vx.x.x
+```
+
 ## 技術スタック
 
 mock server は`Swagger`を用いて実装してます。
 `mock/swagger.yaml`は Stoplight Studio を用いて作成し、起動は Prism を使ってます。
 
 本体の方は`Nest.js`をメインに色々やってます。
+
+## docker imageについて
+
+[ghcr](https://github.com/users/ruritoBlogger/packages/container/package/toko)にイメージを上げています. 
